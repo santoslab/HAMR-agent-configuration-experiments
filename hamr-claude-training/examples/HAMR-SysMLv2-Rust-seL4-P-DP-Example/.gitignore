@@ -1,0 +1,14 @@
+**/.metals/
+**/.vscode/
+**/.cache/
+**/.idea/
+**/.bloop/
+**/.metadata/
+**/.settings/
+**/.scala-build/
+**/out/
+**/target/
+compile_commands.json
+.DS_Store
+*.aaxl2
+**/microkit.system.merged

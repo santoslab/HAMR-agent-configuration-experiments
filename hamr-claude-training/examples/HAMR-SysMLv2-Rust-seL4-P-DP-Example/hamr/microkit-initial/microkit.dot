@@ -1,0 +1,94 @@
+digraph microkit {
+  compound=true;
+
+  // protection domains
+  graph [style=rounded]
+  subgraph cluster_temp_sensor_temp_sensor_MON {
+    label = "temp_sensor_temp_sensor_MON";
+    temp_sensor_temp_sensor_MON_INVIS [label="", style=invis, width=.5, height=.5, fixedsize=true]
+
+    graph [style=rounded]
+    subgraph cluster_temp_sensor_temp_sensor {
+      label = "temp_sensor_temp_sensor";
+      temp_sensor_temp_sensor_INVIS [label="", style=invis, width=.5, height=.5, fixedsize=true]
+
+      pd_temp_sensor_temp_sensor_current_temp_queue_1 [label=current_temp_queue_1];
+    }
+  }
+
+  graph [style=rounded]
+  subgraph cluster_operator_interface_operator_interface_MON {
+    label = "operator_interface_operator_interface_MON";
+    operator_interface_operator_interface_MON_INVIS [label="", style=invis, width=.5, height=.5, fixedsize=true]
+
+    graph [style=rounded]
+    subgraph cluster_operator_interface_operator_interface {
+      label = "operator_interface_operator_interface";
+      operator_interface_operator_interface_INVIS [label="", style=invis, width=.5, height=.5, fixedsize=true]
+
+      pd_operator_interface_operator_interface_desired_temp_queue_1 [label=desired_temp_queue_1];
+    }
+  }
+
+  graph [style=rounded]
+  subgraph cluster_thermostat_thermostat_MON {
+    label = "thermostat_thermostat_MON";
+    thermostat_thermostat_MON_INVIS [label="", style=invis, width=.5, height=.5, fixedsize=true]
+
+    graph [style=rounded]
+    subgraph cluster_thermostat_thermostat {
+      label = "thermostat_thermostat";
+      thermostat_thermostat_INVIS [label="", style=invis, width=.5, height=.5, fixedsize=true]
+
+      pd_thermostat_thermostat_current_temp_queue_1 [label=current_temp_queue_1];
+      pd_thermostat_thermostat_desired_temp_queue_1 [label=desired_temp_queue_1];
+      pd_thermostat_thermostat_heat_control_queue_1 [label=heat_control_queue_1];
+    }
+  }
+
+  graph [style=rounded]
+  subgraph cluster_heat_source_heat_source_MON {
+    label = "heat_source_heat_source_MON";
+    heat_source_heat_source_MON_INVIS [label="", style=invis, width=.5, height=.5, fixedsize=true]
+
+    graph [style=rounded]
+    subgraph cluster_heat_source_heat_source {
+      label = "heat_source_heat_source";
+      heat_source_heat_source_INVIS [label="", style=invis, width=.5, height=.5, fixedsize=true]
+
+      pd_heat_source_heat_source_heat_control_queue_1 [label=heat_control_queue_1];
+    }
+  }
+
+  graph [style=rounded]
+  subgraph cluster_pacer {
+    label = "pacer";
+    pacer_INVIS [label="", style=invis, width=.5, height=.5, fixedsize=true]
+
+  }
+
+  // memory regions
+  Isolette_System_Instance_temp_sensor_temp_sensor_current_temp_1_Memory_Region;
+
+  Isolette_System_Instance_operator_interface_operator_interface_desired_temp_1_Memory_Region;
+
+  Isolette_System_Instance_thermostat_thermostat_heat_control_1_Memory_Region;
+
+  // channels
+  pacer_INVIS -> temp_sensor_temp_sensor_MON_INVIS [lhead=cluster_temp_sensor_temp_sensor_MON, minlen=2, dir=both];
+  temp_sensor_temp_sensor_MON_INVIS -> temp_sensor_temp_sensor_INVIS [lhead=cluster_temp_sensor_temp_sensor, minlen=2, dir=both];
+  pacer_INVIS -> operator_interface_operator_interface_MON_INVIS [lhead=cluster_operator_interface_operator_interface_MON, minlen=2, dir=both];
+  operator_interface_operator_interface_MON_INVIS -> operator_interface_operator_interface_INVIS [lhead=cluster_operator_interface_operator_interface, minlen=2, dir=both];
+  pacer_INVIS -> thermostat_thermostat_MON_INVIS [lhead=cluster_thermostat_thermostat_MON, minlen=2, dir=both];
+  thermostat_thermostat_MON_INVIS -> thermostat_thermostat_INVIS [lhead=cluster_thermostat_thermostat, minlen=2, dir=both];
+  pacer_INVIS -> heat_source_heat_source_MON_INVIS [lhead=cluster_heat_source_heat_source_MON, minlen=2, dir=both];
+  heat_source_heat_source_MON_INVIS -> heat_source_heat_source_INVIS [lhead=cluster_heat_source_heat_source, minlen=2, dir=both];
+
+  // shared memory mappings
+  pd_temp_sensor_temp_sensor_current_temp_queue_1 -> Isolette_System_Instance_temp_sensor_temp_sensor_current_temp_1_Memory_Region [dir=both, style=dashed];
+  pd_operator_interface_operator_interface_desired_temp_queue_1 -> Isolette_System_Instance_operator_interface_operator_interface_desired_temp_1_Memory_Region [dir=both, style=dashed];
+  pd_thermostat_thermostat_current_temp_queue_1 -> Isolette_System_Instance_temp_sensor_temp_sensor_current_temp_1_Memory_Region [dir=back, style=dashed];
+  pd_thermostat_thermostat_desired_temp_queue_1 -> Isolette_System_Instance_operator_interface_operator_interface_desired_temp_1_Memory_Region [dir=back, style=dashed];
+  pd_thermostat_thermostat_heat_control_queue_1 -> Isolette_System_Instance_thermostat_thermostat_heat_control_1_Memory_Region [dir=both, style=dashed];
+  pd_heat_source_heat_source_heat_control_queue_1 -> Isolette_System_Instance_thermostat_thermostat_heat_control_1_Memory_Region [dir=back, style=dashed];
+}

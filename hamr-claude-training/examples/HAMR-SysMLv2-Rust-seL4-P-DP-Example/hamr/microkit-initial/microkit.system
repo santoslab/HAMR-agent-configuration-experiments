@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<system xmlns:xi="http://www.w3.org/2001/XInclude">
+  <!-- Content in between markers will be preserved if codegen is rerun -->
+
+  <xi:include href="microkit.schedule.xml" />
+
+  <protection_domain name="temp_sensor_temp_sensor_MON" domain="domain_3">
+    <program_image path="temp_sensor_temp_sensor_MON.elf" />
+    <protection_domain name="temp_sensor_temp_sensor" domain="domain_3" id="1">
+      <program_image path="temp_sensor_temp_sensor.elf" />
+      <map mr="Isolette_System_Instance_temp_sensor_temp_sensor_current_temp_1_Memory_Region"
+           vaddr="0x10_000_000"
+           perms="rw"
+           setvar_vaddr="current_temp_queue_1"
+      />
+
+      <!-- BEGIN CONTENT MARKER temp_sensor_temp_sensor -->
+      <!-- END CONTENT MARKER temp_sensor_temp_sensor -->
+    </protection_domain>
+
+    <!-- BEGIN CONTENT MARKER temp_sensor_temp_sensor_MON -->
+    <!-- END CONTENT MARKER temp_sensor_temp_sensor_MON -->
+  </protection_domain>
+
+  <protection_domain name="operator_interface_operator_interface_MON" domain="domain_2">
+    <program_image path="operator_interface_operator_interface_MON.elf" />
+    <protection_domain name="operator_interface_operator_interface" domain="domain_2" id="1">
+      <program_image path="operator_interface_operator_interface.elf" />
+      <map mr="Isolette_System_Instance_operator_interface_operator_interface_desired_temp_1_Memory_Region"
+           vaddr="0x10_000_000"
+           perms="rw"
+           setvar_vaddr="desired_temp_queue_1"
+      />
+
+      <!-- BEGIN CONTENT MARKER operator_interface_operator_interface -->
+      <!-- END CONTENT MARKER operator_interface_operator_interface -->
+    </protection_domain>
+
+    <!-- BEGIN CONTENT MARKER operator_interface_operator_interface_MON -->
+    <!-- END CONTENT MARKER operator_interface_operator_interface_MON -->
+  </protection_domain>
+
+  <protection_domain name="thermostat_thermostat_MON" domain="domain_4">
+    <program_image path="thermostat_thermostat_MON.elf" />
+    <protection_domain name="thermostat_thermostat" domain="domain_4" id="1">
+      <program_image path="thermostat_thermostat.elf" />
+      <map mr="Isolette_System_Instance_temp_sensor_temp_sensor_current_temp_1_Memory_Region"
+           vaddr="0x10_000_000"
+           perms="r"
+           setvar_vaddr="current_temp_queue_1"
+      />
+      <map mr="Isolette_System_Instance_operator_interface_operator_interface_desired_temp_1_Memory_Region"
+           vaddr="0x10_001_000"
+           perms="r"
+           setvar_vaddr="desired_temp_queue_1"
+      />
+      <map mr="Isolette_System_Instance_thermostat_thermostat_heat_control_1_Memory_Region"
+           vaddr="0x10_002_000"
+           perms="rw"
+           setvar_vaddr="heat_control_queue_1"
+      />
+
+      <!-- BEGIN CONTENT MARKER thermostat_thermostat -->
+      <!-- END CONTENT MARKER thermostat_thermostat -->
+    </protection_domain>
+
+    <!-- BEGIN CONTENT MARKER thermostat_thermostat_MON -->
+    <!-- END CONTENT MARKER thermostat_thermostat_MON -->
+  </protection_domain>
+
+  <protection_domain name="heat_source_heat_source_MON" domain="domain_5">
+    <program_image path="heat_source_heat_source_MON.elf" />
+    <protection_domain name="heat_source_heat_source" domain="domain_5" id="1">
+      <program_image path="heat_source_heat_source.elf" />
+      <map mr="Isolette_System_Instance_thermostat_thermostat_heat_control_1_Memory_Region"
+           vaddr="0x10_000_000"
+           perms="r"
+           setvar_vaddr="heat_control_queue_1"
+      />
+
+      <!-- BEGIN CONTENT MARKER heat_source_heat_source -->
+      <!-- END CONTENT MARKER heat_source_heat_source -->
+    </protection_domain>
+
+    <!-- BEGIN CONTENT MARKER heat_source_heat_source_MON -->
+    <!-- END CONTENT MARKER heat_source_heat_source_MON -->
+  </protection_domain>
+
+  <protection_domain name="pacer" domain="domain_1">
+    <program_image path="pacer.elf" />
+
+    <!-- BEGIN CONTENT MARKER pacer -->
+    <!-- END CONTENT MARKER pacer -->
+  </protection_domain>
+
+  <memory_region name="Isolette_System_Instance_temp_sensor_temp_sensor_current_temp_1_Memory_Region"
+                 size="0x1_000" />
+
+  <memory_region name="Isolette_System_Instance_operator_interface_operator_interface_desired_temp_1_Memory_Region"
+                 size="0x1_000" />
+
+  <memory_region name="Isolette_System_Instance_thermostat_thermostat_heat_control_1_Memory_Region"
+                 size="0x1_000" />
+
+  <channel>
+    <end pd="pacer" id="61" />
+    <end pd="temp_sensor_temp_sensor_MON" id="61" />
+  </channel>
+
+  <channel>
+    <end pd="temp_sensor_temp_sensor_MON" id="60" />
+    <end pd="temp_sensor_temp_sensor" id="60" />
+  </channel>
+
+  <channel>
+    <end pd="pacer" id="59" />
+    <end pd="operator_interface_operator_interface_MON" id="59" />
+  </channel>
+
+  <channel>
+    <end pd="operator_interface_operator_interface_MON" id="58" />
+    <end pd="operator_interface_operator_interface" id="58" />
+  </channel>
+
+  <channel>
+    <end pd="pacer" id="57" />
+    <end pd="thermostat_thermostat_MON" id="57" />
+  </channel>
+
+  <channel>
+    <end pd="thermostat_thermostat_MON" id="56" />
+    <end pd="thermostat_thermostat" id="56" />
+  </channel>
+
+  <channel>
+    <end pd="pacer" id="55" />
+    <end pd="heat_source_heat_source_MON" id="55" />
+  </channel>
+
+  <channel>
+    <end pd="heat_source_heat_source_MON" id="54" />
+    <end pd="heat_source_heat_source" id="54" />
+  </channel>
+
+  <!-- BEGIN MSD CONTENT MARKER -->
+  <!-- END MSD CONTENT MARKER -->
+</system>
