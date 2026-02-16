@@ -63,16 +63,18 @@ mod GUMBOX_tests {
     api_input: generators::option_strategy_default(generators::ProdCons_Message_strategy_default())
   }
 
-  testComputeCBwGSV_macro! {
-    prop_testComputeCBwGSV_macro, // test name
-    config: ProptestConfig { // proptest configuration, built by overriding fields from default config
-      cases: numValidComputeTestCases,
-      max_global_rejects: numValidComputeTestCases * computeRejectRatio,
-      verbose: verbosity,
-      ..ProptestConfig::default()
-    },
-    // strategies for generating each component input
-    In_payload_sum: generators::i32_strategy_default(),
-    api_input: generators::option_strategy_default(generators::ProdCons_Message_strategy_default())
-  }
+  // ToDo: Report i32 strategy bug below to Jason
+  
+  // testComputeCBwGSV_macro! {
+  //   prop_testComputeCBwGSV_macro, // test name
+  //   config: ProptestConfig { // proptest configuration, built by overriding fields from default config
+  //     cases: numValidComputeTestCases,
+  //     max_global_rejects: numValidComputeTestCases * computeRejectRatio,
+  //     verbose: verbosity,
+  //     ..ProptestConfig::default()
+  //   },
+  //   // strategies for generating each component input
+  //   In_payload_sum: generators::i32_strategy_default(),
+  //   api_input: generators::option_strategy_default(generators::ProdCons_Message_strategy_default())
+  // }
 }

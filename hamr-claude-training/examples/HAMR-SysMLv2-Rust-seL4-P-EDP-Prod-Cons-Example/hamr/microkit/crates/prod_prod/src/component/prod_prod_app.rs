@@ -1,6 +1,7 @@
 // This file will not be overwritten if codegen is rerun
 
 use data::*;
+use data::ProdCons::*;
 use crate::bridge::prod_prod_api::*;
 use vstd::prelude::*;
 
@@ -13,6 +14,10 @@ verus! {
   // constants declared to support message simulation (not publicly visible)
   const message_freq: i32 = 5; // a message is sent out every 5 dispatches
 
+  //-------------------------------------------
+  //  Application State (as a struct)
+  //-------------------------------------------
+
   pub struct prod_prod {
     // PLACEHOLDER MARKER STATE VARS
 
@@ -24,10 +29,14 @@ verus! {
     // Two variables below are used for message simulation
     // This also illustrates non-GUMBO declared state variable for a component
     pub num_dispatches: i32, 
-    pub next_payload: i32
+    pub next_payload: i32,
+    pub control_num: i32,
   }
 
   impl prod_prod {
+    //-------------------------------------------
+    //  Application Component Constructor
+    //-------------------------------------------
     pub fn new() -> Self
     {
       Self {
@@ -36,9 +45,13 @@ verus! {
         // initialization of non-GUMBO declared state variable
         num_dispatches: 0, 
         next_payload: 0, // first payload to send is 0
+        control_num: 0, // first control number is 0
       }
     }
 
+    //-------------------------------------------
+    //  Initialize Entry Point
+    //-------------------------------------------
     pub fn initialize<API: prod_prod_Put_Api> (
       &mut self,
       api: &mut prod_prod_Application_Api<API>)
@@ -47,9 +60,18 @@ verus! {
     {
       log_info("initialize entrypoint invoked");
 
-      
+      self.num_dispatches = 0; 
+      self.next_payload = 0; 
+      self.control_num = 0; 
+
+      // Note: Since the only output port is an event data port, 
+      // there is no need to "initialize" it by "put_"-ing a value on it 
+      // (only data ports need to be initialized).
     }
 
+    //-------------------------------------------
+    //  Compute Entry Point
+    //-------------------------------------------
     pub fn timeTriggered<API: prod_prod_Full_Api> (
       &mut self,
       api: &mut prod_prod_Application_Api<API>)
@@ -59,8 +81,39 @@ verus! {
         // PLACEHOLDER MARKER TIME TRIGGERED ENSURES
     {
       log_info("compute entrypoint invoked");
+
+      self.num_dispatches = self.num_dispatches + 1;
+
+      // ..we only send messages every 5 dispatches
+      if self.num_dispatches >= 5 {
+        // ..after waiting through some dispatches, it's now time to 
+        // take action.
+
+        // assemble, send, and log message
+        let m = Message{payload: self.next_payload, control_num: self.control_num};
+        api.put_output(m);
+        log_message_sent(m);
+
+        // update payload
+        self.next_payload = self.next_payload + 1;
+        if self.next_payload > 90 {
+          self.next_payload = 0;
+        }
+
+        // update control number
+        self.control_num = self.control_num + 1;
+        if self.control_num > 10000 { // avoid rollover
+          self.control_num = 0;
+        }
+
+        // reset dispatch count
+        self.num_dispatches = 0;
+      }
     }
 
+    //-------------------------------------------
+    //  seL4 / Microkit Error Handling
+    //-------------------------------------------
     pub fn notify(
       &mut self,
       channel: microkit_channel)
@@ -74,10 +127,19 @@ verus! {
     }
   }
 
+  //-------------------------------------------
+  //  Logging Helper Functions
+  //-------------------------------------------
   #[verifier::external_body]
   pub fn log_info(msg: &str)
   {
     log::info!("{0}", msg);
+  }
+
+  #[verifier::external_body]
+  pub fn log_message_sent(m: Message)
+  {
+    log::info!("Prod: Message sent: Payload={0} Control_Num={1}", m.payload, m.control_num);
   }
 
   #[verifier::external_body]
