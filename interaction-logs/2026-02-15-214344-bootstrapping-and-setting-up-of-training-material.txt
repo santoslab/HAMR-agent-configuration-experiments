@@ -1,0 +1,1101 @@
+
+▗ ▗   ▖ ▖  Claude Code v2.1.42
+           Opus 4.6 · Claude Max
+  ▘▘ ▝▝    ~/Dev/Claude/HAMR-Claude-configuration-experiments-git
+
+❯ Explain this project to me. 
+
+⏺ Let me explore the project structure to give you a good overview.
+
+⏺ Searched for 1 pattern, read 9 files (ctrl+o to expand)
+  ⎿  Loaded hamr-claude-training/doc/hamr-overview.md
+  ⎿  Loaded hamr-claude-training/doc/technical-approach.md
+  ⎿  Loaded hamr-claude-training/doc/folder-structure.md
+
+⏺ Here's an overview of this project:
+
+  Goal
+
+  This project is about creating training/context material for Claude so that it
+   can effectively assist software engineers working with the HAMR toolchain --
+  a model-based development framework for building high-assurance safety- and
+  security-critical systems (part of the Sireum framework from Kansas State
+  University).
+
+  The idea is that when a developer starts a new HAMR project, they can point
+  Claude at the training material in this repo to give it the domain knowledge
+  it needs to help with HAMR development tasks.
+
+  Structure
+
+  The project has two main folders:
+
+  hamr-claude-training/ -- The training material for Claude
+
+  - CLAUDE.md -- Top-level guide telling Claude what's in this folder and how to
+   use it
+  - doc/ -- Documentation about HAMR:
+    - hamr-overview.md -- Comprehensive overview of HAMR's purpose, workflow
+  (modeling in SysMLv2, code generation, component implementation in Rust,
+  testing with PropTest, verification with Verus, deployment to seL4 Microkit)
+    - technical-approach.md -- Execution semantics (read-compute-write model,
+  port freezing, periodic/sporadic dispatch)
+    - folder-structure.md -- Placeholder (TBD)
+  - examples/ -- Two worked HAMR examples (Producer-Consumer variants) showing
+  SysMLv2 models, generated Rust code, and developer-written application logic
+  - .mcp.json -- Configures the Sireum MCP server so Claude can invoke HAMR
+  tools (type checking, code generation, etc.) directly
+
+  evaluation-project/ -- A test project to evaluate the training material
+
+  - Contains a Simple Network Guard (SNG) specification -- a toy network
+  guard/cross-domain solution with gate and filter pipeline stages
+  - Currently has requirements but the sysmlv2/ and hamr/ folders appear empty
+  -- this is the project where you'd ask Claude to apply HAMR using the training
+   material, then evaluate how well it performs
+
+  Methodology
+
+  The workflow is iterative:
+  1. Ask Claude to consult hamr-claude-training/ for context
+  2. Ask Claude to perform HAMR development tasks on the evaluation-project/
+  3. When Claude struggles or makes mistakes, improve the training material
+  4. Repeat
+
+  Current State
+
+  The training material has solid documentation and examples, but some pieces
+  are still in progress (e.g., folder-structure.md is TBD). The evaluation
+  project has requirements written but implementation hasn't been started yet.
+  The project also has Sireum MCP integration configured at both the root and
+  training-folder level, giving Claude access to HAMR's CLI tools (type
+  checking, code generation, etc.).
+
+✻ Crunched for 32s
+
+❯ What do you see as the available MCP capabilities? 
+
+⏺ From the .mcp.json configuration, the project has the Sireum MCP server
+  configured. Looking at the deferred tools available to me, here are all the
+  Sireum MCP capabilities I can see:
+
+  HAMR-Specific Tools
+
+  ┌──────────────────────────────┬─────────────────────────────────────┐
+  │             Tool             │           Likely Purpose            │
+  ├──────────────────────────────┼─────────────────────────────────────┤
+  │ sireum_hamr_codegen          │ Run HAMR code generation            │
+  ├──────────────────────────────┼─────────────────────────────────────┤
+  │ sireum_hamr_phantom          │ OSATE/AADL phantom build support    │
+  ├──────────────────────────────┼─────────────────────────────────────┤
+  │ sireum_hamr_sysml_codegen    │ SysMLv2-based code generation       │
+  ├──────────────────────────────┼─────────────────────────────────────┤
+  │ sireum_hamr_sysml_config     │ Code generation configuration       │
+  ├──────────────────────────────┼─────────────────────────────────────┤
+  │ sireum_hamr_sysml_logika     │ Logika verification on SysML models │
+  ├──────────────────────────────┼─────────────────────────────────────┤
+  │ sireum_hamr_sysml_tipe       │ HAMR SysML type checking            │
+  ├──────────────────────────────┼─────────────────────────────────────┤
+  │ sireum_hamr_sysml_translator │ SysML model translation             │
+  └──────────────────────────────┴─────────────────────────────────────┘
+
+  Logika (Verification)
+
+  ┌────────────────────────┬────────────────────────────────────┐
+  │          Tool          │           Likely Purpose           │
+  ├────────────────────────┼────────────────────────────────────┤
+  │ sireum_logika_config   │ Configure Logika verifier settings │
+  ├────────────────────────┼────────────────────────────────────┤
+  │ sireum_logika_verifier │ Run Logika formal verification     │
+  └────────────────────────┴────────────────────────────────────┘
+
+  Proyek (Project Build System)
+
+  ┌──────────────────────────┬────────────────────────────┐
+  │           Tool           │       Likely Purpose       │
+  ├──────────────────────────┼────────────────────────────┤
+  │ sireum_proyek_compile    │ Compile a Sireum project   │
+  ├──────────────────────────┼────────────────────────────┤
+  │ sireum_proyek_run        │ Run a Sireum project       │
+  ├──────────────────────────┼────────────────────────────┤
+  │ sireum_proyek_test       │ Run project tests          │
+  ├──────────────────────────┼────────────────────────────┤
+  │ sireum_proyek_tipe       │ Type check a project       │
+  ├──────────────────────────┼────────────────────────────┤
+  │ sireum_proyek_logika     │ Run Logika on a project    │
+  ├──────────────────────────┼────────────────────────────┤
+  │ sireum_proyek_assemble   │ Assemble/package a project │
+  ├──────────────────────────┼────────────────────────────┤
+  │ sireum_proyek_dep        │ Manage dependencies        │
+  ├──────────────────────────┼────────────────────────────┤
+  │ sireum_proyek_export     │ Export project             │
+  ├──────────────────────────┼────────────────────────────┤
+  │ sireum_proyek_ive        │ IDE integration            │
+  ├──────────────────────────┼────────────────────────────┤
+  │ sireum_proyek_publish    │ Publish project            │
+  ├──────────────────────────┼────────────────────────────┤
+  │ sireum_proyek_reflect    │ Reflection utilities       │
+  ├──────────────────────────┼────────────────────────────┤
+  │ sireum_proyek_slangcheck │ SlangCheck on a project    │
+  ├──────────────────────────┼────────────────────────────┤
+  │ sireum_proyek_stats      │ Project statistics         │
+  └──────────────────────────┴────────────────────────────┘
+
+  Slang (Language Tools)
+
+  ┌────────────────────────────┬─────────────────────────┐
+  │            Tool            │     Likely Purpose      │
+  ├────────────────────────────┼─────────────────────────┤
+  │ sireum_slang_run           │ Run Slang code          │
+  ├────────────────────────────┼─────────────────────────┤
+  │ sireum_slang_tipe          │ Type check Slang code   │
+  ├────────────────────────────┼─────────────────────────┤
+  │ sireum_slang_refactor      │ Refactor Slang code     │
+  ├────────────────────────────┼─────────────────────────┤
+  │ sireum_slang_template      │ Generate from templates │
+  ├────────────────────────────┼─────────────────────────┤
+  │ sireum_slang_transpilers_c │ Transpile Slang to C    │
+  └────────────────────────────┴─────────────────────────┘
+
+  Code Generation / Utilities
+
+  ┌───────────────────────────────────┬────────────────────────────────────┐
+  │               Tool                │           Likely Purpose           │
+  ├───────────────────────────────────┼────────────────────────────────────┤
+  │ sireum_tools_bcgen                │ Bit codec generator                │
+  ├───────────────────────────────────┼────────────────────────────────────┤
+  │ sireum_tools_checkstack           │ Stack usage analysis               │
+  ├───────────────────────────────────┼────────────────────────────────────┤
+  │ sireum_tools_cligen               │ CLI generator                      │
+  ├───────────────────────────────────┼────────────────────────────────────┤
+  │ sireum_tools_jsons                │ JSON serialization tools           │
+  ├───────────────────────────────────┼────────────────────────────────────┤
+  │ sireum_tools_opgen                │ Operation generator                │
+  ├───────────────────────────────────┼────────────────────────────────────┤
+  │ sireum_tools_sergen               │ Serialization generator            │
+  ├───────────────────────────────────┼────────────────────────────────────┤
+  │ sireum_tools_slangcheck_generator │ Generate SlangCheck test harnesses │
+  ├───────────────────────────────────┼────────────────────────────────────┤
+  │ sireum_tools_slangcheck_runner    │ Run SlangCheck tests               │
+  ├───────────────────────────────────┼────────────────────────────────────┤
+  │ sireum_tools_slangcheck_tester    │ SlangCheck testing                 │
+  ├───────────────────────────────────┼────────────────────────────────────┤
+  │ sireum_tools_trafo                │ AST transformation tools           │
+  └───────────────────────────────────┴────────────────────────────────────┘
+
+  Other
+
+  ┌───────────────────────────────┬──────────────────────────────────┐
+  │             Tool              │          Likely Purpose          │
+  ├───────────────────────────────┼──────────────────────────────────┤
+  │ sireum_parser_gen             │ Parser generator                 │
+  ├───────────────────────────────┼──────────────────────────────────┤
+  │ sireum_presentasi_gen         │ Presentation generator           │
+  ├───────────────────────────────┼──────────────────────────────────┤
+  │ sireum_presentasi_text2speech │ Text-to-speech for presentations │
+  ├───────────────────────────────┼──────────────────────────────────┤
+  │ sireum_setup_ive              │ Set up CodeIVE                   │
+  ├───────────────────────────────┼──────────────────────────────────┤
+  │ sireum_setup_vscode           │ Set up VSCode                    │
+  └───────────────────────────────┴──────────────────────────────────┘
+
+  Most Relevant for This Project
+
+  For the evaluation project (SysMLv2 + Rust + seL4 Microkit), the key tools
+  would be:
+
+  1. sireum_hamr_sysml_tipe -- Type check SysMLv2 models to confirm they're
+  valid HAMR SysML
+  2. sireum_hamr_sysml_codegen -- Generate Rust/Microkit code from SysMLv2
+  models
+  3. sireum_hamr_sysml_config -- Configure code generation options
+  4. sireum_logika_verifier -- Verify Rust code against Verus contracts
+
+  I haven't loaded any of these tools yet -- I'd need to use ToolSearch to
+  activate them before invoking them. Would you like me to load any of these and
+   explore their parameters/usage?
+
+❯ Yes, load the ones you identified as most relevant for this project.      
+  Also, if it would help you in the future, please add some documentation   
+  to the HAMR training material to record the functionality and options for 
+   these tools.                                                             
+
+⏺ Let me load all four tools in parallel.
+
+⏺ All four tools are now loaded. Let me examine the existing examples to see how
+   these tools are typically invoked, then I'll write the documentation.
+
+⏺ Searched for 2 patterns, read 1 file (ctrl+o to expand)
+
+⏺ Now let me look at the ProdCons model to understand the configuration comment
+  pattern and sourcepath structure.
+
+⏺ Searched for 1 pattern, read 1 file (ctrl+o to expand)
+
+⏺ Explore(Explore example Rust crate structure)
+  ⎿  Done (0 tool uses · 0 tokens · 0s)
+  (ctrl+o to expand)
+
+⏺ Bash(find /Users/hatcliff/Dev/Claude/HAMR-Claude-configuration-experiments-git
+      /hamr-claude-training/examples/HAMR-SysMLv2-Rust-seL4-P-EDP-Prod-Cons-Exam
+      ple/hamr/micr…)
+  ⎿  /Users/hatcliff/Dev/Claude/HAMR-Claude-configuration-experiments-git/h
+     amr-claude-training/examples/HAMR-SysMLv2-Rust-seL4-P-EDP-Prod-Cons-Ex
+     ample/hamr/microkit/crates/cons_cons/src/bridge/cons_cons_api.rs
+     … +91 lines (ctrl+o to expand)
+
+⏺ Read 2 files (ctrl+o to expand)
+
+⏺ Now I have a thorough understanding of the tools and how they relate to the
+  project. Let me write the documentation file.
+
+⏺ Write(hamr-claude-training/doc/mcp-tools.md)
+  ⎿  Wrote 267 lines to hamr-claude-training/doc/mcp-tools.md
+       1 # HAMR MCP Tools Reference
+       2 
+       3 HAMR exposes its functionality through MCP (Model Context Protoc
+         ol) tools via the Sireum MCP server. This document describes the
+          MCP tools most relevant for HAMR development with SysMLv2 model
+         s targeting Rust on seL4 Microkit.
+       4 
+       5 ## MCP Server Configuration
+       6 
+       7 The Sireum MCP server is configured in `.mcp.json`:
+       8 ```json
+       9 {
+      10   "mcpServers": {
+     … +257 lines (ctrl+o to expand)
+
+⏺ Now let me update the training material's CLAUDE.md to reference this new
+  document.
+
+⏺ Read 1 file (ctrl+o to expand)
+
+⏺ Update(hamr-claude-training/CLAUDE.md)
+  ⎿  Added 2 lines, removed 1 line
+      10  
+      11  - HAMR Overview - @doc/hamr-overview.md contains a summary of H
+          AMR's overall purpose, nature of its input and output artifacts
+          , and develop workflows.
+      12  - Project Folder Structure - @doc/folder-structure.md contains 
+          a summary of the folder structure that every HAMR project follo
+          ws
+      13 -- Technical Approach - @doc/technical-approach.md explains the 
+         -semantics of HAMR thread component execution.                  
+      13 +- Technical Approach - @doc/technical-approach.md explains the 
+         +semantics of HAMR thread component execution.                  
+      14 +- MCP Tools Reference - @doc/mcp-tools.md documents the Sireum 
+         +MCP tools available for HAMR development, including type checki
+         +ng, code generation, configuration, and formal verification.   
+      15  
+      16  ## Examples
+      17  
+
+⏺ Here's a summary of what I did:
+
+  Tools loaded (4):
+
+  1. sireum_hamr_sysml_tipe -- Type checks SysMLv2 models against the HAMR SysML
+   subset. Takes a .sysml file and sourcepaths.
+  2. sireum_hamr_sysml_codegen -- Generates Rust code, C bridge code, build
+  files, Microkit config, and test infrastructure from SysMLv2 models. Has
+  extensive options for platform, output directories, bit-widths, etc.
+  3. sireum_hamr_sysml_config -- Opens an interactive configuration form.
+  Lightweight -- mainly useful in the CodeIVE GUI, less so for Claude-driven
+  workflows.
+  4. sireum_logika_verifier -- Formal verification engine with many SMT solver
+  options, splitting strategies, and debugging controls.
+
+  Documentation created:
+
+  - hamr-claude-training/doc/mcp-tools.md -- Comprehensive reference documenting
+   all four tools with parameter tables, usage examples, sourcepath conventions,
+   and a typical workflow summary. Also lists other available MCP tools for
+  reference.
+  - Updated hamr-claude-training/CLAUDE.md to reference the new document.
+
+✻ Churned for 2m 7s
+
+❯ I checked your summary and documentation, and there is one thing that     
+  needs to be fixed.  The logika verification tool that you listed applies  
+  to Slang source code.  You instead should reference                       
+  sireum_hamr_sysml_logika which uses logika to check SysMLv2 GUMBO         
+  Integration constraints.  Please update documentation.                    
+
+⏺ Good catch. Let me load the correct tool and update the documentation.
+
+⏺ Good, now I have the correct tool details. It takes SysMLv2 files (not Slang
+  files) and has a sourcepath for .sysml files plus an exclude parameter --
+  consistent with the other HAMR SysML tools. Let me update the documentation.
+
+⏺ Read 1 file (ctrl+o to expand)
+
+⏺ Now I'll replace the sireum_logika_verifier section with
+  sireum_hamr_sysml_logika and update all references.
+
+⏺ Update(hamr-claude-training/doc/mcp-tools.md)
+  ⎿  Added 18 lines, removed 6 lines
+      182  
+      183  ---
+      184  
+      185 -## sireum_logika_verifier -- Formal Verification              
+      185 +## sireum_hamr_sysml_logika -- HAMR SysMLv2 Logika Verifier   
+      186  
+      187 -**Purpose:** Runs the Logika formal verifier on Slang (Scala) 
+          -source files to verify that code conforms to its specification
+          -s (contracts). In the HAMR context, this verifies that Rust co
+          -mponent implementations (via Verus contracts generated from GU
+          -MBO specifications) meet their formal specifications.         
+      187 +**Purpose:** Runs the Logika formal verifier on SysMLv2 models
+          + to check GUMBO integration constraints. This operates at the 
+          +model level, verifying that GUMBO contracts (integration const
+          +raints, initialize guarantees, compute contracts) specified in
+          + SysMLv2 models are well-formed and consistent.               
+      188  
+      189 -**When to use:** After implementing component application logi
+          -c to verify correctness against GUMBO/Verus contracts.        
+      189 +**When to use:** After adding or modifying GUMBO contracts in 
+          +SysMLv2 models to verify that integration constraints are sati
+          +sfiable and consistent.                                       
+      190  
+      191  ### Key Parameters
+      192  
+      193  | Parameter | Type | Default | Description |
+      194  |-----------|------|---------|-------------|
+      195 -| `args` | string[] | - | Positional arguments; paths to Slang
+          - `.scala` files to verify |                                   
+      196 -| `sourcepath` | string[] | - | Sourcepath of Slang `.scala` f
+          -iles |                                                        
+      195 +| `args` | string[] | - | Positional arguments; paths to `.sys
+          +ml` files to verify |                                         
+      196 +| `sourcepath` | string[] | - | Source paths of SysML v2 `.sys
+          +ml` files (same convention as type checker) |                 
+      197 +| `exclude` | string | - | Sourcepath exclusion as URI segment
+          + |                                                            
+      198  | `timeout` | integer | 2 | Timeout in seconds for validity ch
+           ecking |
+      199  | `rlimit` | integer | 2000000 | SMT2 solver resource limit |
+      200  | `line` | integer | 0 | Focus verification to a specific line
+            number |
+     ...
+      216  | `interprocedural-contracts` | boolean | false | Use contract
+           s in inter-procedural verification |
+      217  | `loop-bound` | integer | 3 | Loop bound for inter-procedural
+            verification |
+      218  | `recursive-bound` | integer | 3 | Recursive call-chain bound
+            |
+      218 -| `info-flow` | boolean | false | Enable information flow veri
+          -fication |                                                    
+      219  | `skip-methods` | string | - | Skip methods with specified fu
+           lly-qualified names |
+      220  | `skip-types` | string | - | Skip specified traits, classes, 
+           and objects |
+      221  
+     ...
+      239  | `elide-encoding` | boolean | false | Strip SMT2 encoding fro
+           m feedback |
+      240  | `stats` | boolean | false | Collect verification statistics 
+           |
+      241  
+      242 +### Example Usage                                             
+      243 +                                                              
+      244 +Verify GUMBO integration constraints for ProdCons:            
+      245 +```                                                           
+      246 +Tool: sireum_hamr_sysml_logika                                
+      247 +args: ["<project-root>/sysmlv2/prod-cons/ProdCons.sysml"]     
+      248 +sourcepath: [                                                 
+      249 +  "<project-root>/sysmlv2/aadl-lib",                          
+      250 +  "<project-root>/sysmlv2/prod-cons"                          
+      251 +]                                                             
+      252 +```                                                           
+      253 +                                                              
+      254  ---
+      255  
+      256  ## Typical HAMR Development Workflow Using MCP Tools
+
+⏺ Now update the workflow section and the "Other Available" list.
+
+⏺ Update(hamr-claude-training/doc/mcp-tools.md)
+  ⎿  Added 1 line, removed 1 line
+      260  3. **Generate code** -- Run `sireum_hamr_sysml_codegen` with p
+           latform `Microkit` to generate Rust scaffolding
+      261  4. **Implement application logic** -- Edit `*_app.rs` files in
+            each component's `component/` directory
+      262  5. **Run tests** -- Use the generated test infrastructure (Pro
+           pTest) to test component implementations
+      263 -6. **Verify** -- Run `sireum_logika_verifier` to formally veri
+          -fy implementations against contracts                          
+      263 +6. **Verify integration constraints** -- Run `sireum_hamr_sysm
+          +l_logika` to verify GUMBO integration constraints at the model
+          + level                                                        
+      264  7. **Iterate** -- Modify models or code and repeat from step 2
+      265  
+      266  ## Other Available MCP Tools
+
+⏺ Now update the "Other Available" section to move sireum_logika_verifier there
+  (since it still exists, just for Slang not SysMLv2) and remove the
+  now-documented sireum_hamr_sysml_logika from the list.
+
+⏺ Update(hamr-claude-training/doc/mcp-tools.md)
+  ⎿  Added 1 line
+      268  The Sireum MCP server exposes additional tools beyond those do
+           cumented above. Some that may be useful in HAMR projects inclu
+           de:
+      269  
+      270  - **`sireum_hamr_sysml_translator`** -- Translate SysMLv2 mode
+           ls between representations
+      271 +- **`sireum_logika_verifier`** -- Logika formal verifier for S
+          +lang (Scala) source files                                     
+      272  - **`sireum_logika_config`** -- Configure Logika verifier sett
+           ings
+      273  - **`sireum_proyek_compile`** -- Compile a Sireum/Slang projec
+           t
+      274  - **`sireum_proyek_test`** -- Run project tests
+
+⏺ Done. Here's what changed:
+
+  - Replaced the sireum_logika_verifier section with sireum_hamr_sysml_logika --
+   the correct tool that operates on SysMLv2 .sysml files to verify GUMBO
+  integration constraints at the model level (not Slang source files)
+  - The new section correctly shows sourcepath for .sysml files and includes the
+   exclude parameter consistent with the other HAMR SysML tools
+  - Added an example usage block showing how to invoke it with the ProdCons
+  model
+  - Updated the workflow step 6 to reference the correct tool
+  - Moved sireum_logika_verifier to the "Other Available MCP Tools" list (since
+  it still exists for Slang verification, just isn't the primary one for this
+  project's workflow)
+
+✻ Baked for 49s
+
+❯ There was a small problem with the MCP workflow description in the        
+  section "Typical HAMR Development Workflow Using MCP Tools"  I have       
+  edited that file direct to fix the problem.                               
+
+⏺ Understood. I see you restructured the workflow to separate the core steps
+  from the optional GUMBO contract verification -- making it clear that adding
+  GUMBO contracts and running sireum_hamr_sysml_logika is an optional activity
+  rather than a required step in every iteration. That's a cleaner
+  representation of the workflow.
+
+❯ commit and push these changes with message "Claude generated              
+  documentation for MCP interfaces".                                        
+
+⏺ Bash(git status)
+  ⎿  On branch main
+     Your branch is up to date with 'origin/main'.
+     … +12 lines (ctrl+o to expand)
+
+⏺ Bash(git diff)
+  ⎿  diff --git a/hamr-claude-training/CLAUDE.md b/hamr-claude-training/CLA
+     UDE.md
+     index 43f5321..4385dc3 100644
+     … +15 lines (ctrl+o to expand)
+
+⏺ Bash(git log --oneline -5)
+  ⎿  08009c0 Finish coding HAMR examples (skipping some testing, etc.)
+     82c4fc6 Initial commit (artifacts in a preliminary state - not ready f
+     or experiments yet)
+     587add5 Initial commit
+
+⏺ Bash(git add hamr-claude-training/CLAUDE.md
+      hamr-claude-training/doc/mcp-tools.md && git commit -m "Claude generated
+      documentation for MCP interfaces.…)
+  ⎿  [main c8e4b0d] Claude generated documentation for MCP interfaces.
+      2 files changed, 284 insertions(+), 1 deletion(-)
+      create mode 100644 hamr-claude-training/doc/mcp-tools.md
+     … +10 lines (ctrl+o to expand)
+
+⏺ Bash(git push)
+  ⎿  To github.com:John-Hatcliff/HAMR-Claude-configuration-experiments.git
+        08009c0..c8e4b0d  main -> main
+
+⏺ Committed and pushed. Two files included:
+  - hamr-claude-training/doc/mcp-tools.md (new -- the MCP tools reference)
+  - hamr-claude-training/CLAUDE.md (updated -- added reference to the new doc)
+
+❯ I want you to help me draft the documentation for the structure of the    
+  HAMR-generated Microkit seL4 code in doc/folder-structure.md.   Please    
+  assess the structure of the files in the hamr/microkit folder for each of 
+   these examples.  Note that in Simple Isolette example, there is a        
+  hamr/microkit-initial which illustrates the initial state of the code     
+  generated from HAMR before the developer writes any application code or   
+  tests.  This folder will not be in every project.  I have just added it   
+  in Simple Isolette so that you can clearly understand the difference      
+  between the auto-generated files and what the files look like after the   
+  developer has worked on the project.                                      
+
+⏺ Let me thoroughly explore both examples' folder structures, including the
+  initial vs. developer-edited state.
+
+⏺ Bash(find /Users/hatcliff/Dev/Claude/HAMR-Claude-configuration-experiments-git
+      /hamr-claude-training/examples/HAMR-SysMLv2-Rust-seL4-P-DP-Example/hamr
+      -type f -not -p…)
+  ⎿  /Users/hatcliff/Dev/Claude/HAMR-Claude-configuration-experiments-git/h
+     amr-claude-training/examples/HAMR-SysMLv2-Rust-seL4-P-DP-Example/hamr/
+     microkit-initial/build/Makefile
+     … +649 lines (ctrl+o to expand)
+
+⏺ Bash(find /Users/hatcliff/Dev/Claude/HAMR-Claude-configuration-experiments-git
+      /hamr-claude-training/examples/HAMR-SysMLv2-Rust-seL4-P-EDP-Prod-Cons-Exam
+      ple/hamr -typ…)
+  ⎿  /Users/hatcliff/Dev/Claude/HAMR-Claude-configuration-experiments-git/h
+     amr-claude-training/examples/HAMR-SysMLv2-Rust-seL4-P-EDP-Prod-Cons-Ex
+     ample/hamr/microkit/components/cons_cons/include/cons_cons.h
+     … +180 lines (ctrl+o to expand)
+
+⏺ Now let me read key files to understand their roles -- comparing initial vs.
+  developer-edited versions, and examining the build/infrastructure files.
+
+⏺ Read 1 file (ctrl+o to expand)
+
+⏺ Now let me read representative files to understand the initial vs.
+  developer-edited state, and key infrastructure files.
+
+⏺ Read 4 files (ctrl+o to expand)
+
+⏺ Now let me read a few more key infrastructure files to understand the build
+  system and C bridge layer.
+
+⏺ Read 4 files (ctrl+o to expand)
+
+⏺ Now let me check a few more files -- the GUMBOX, test utilities, generators,
+  and the Makefile/system.mk.
+
+⏺ Read 4 files (ctrl+o to expand)
+
+⏺ Let me also quickly check the cb_apis.rs file and the lib.rs to understand the
+   test harness structure, and the system.mk and microkit.dot.
+
+⏺ Read 4 files (ctrl+o to expand)
+
+⏺ I now have a thorough understanding of the structure. Let me draft the
+  documentation.
+
+⏺ Read 1 file (ctrl+o to expand)
+
+⏺ Write(hamr-claude-training/doc/folder-structure.md)
+  ⎿  Added 167 lines, removed 2 lines
+        1 -# Folder Structure                                            
+        1 +# HAMR Microkit Folder Structure                              
+        2  
+        3 -TBD.                                                          
+        3 +This document describes the folder structure generated by HAMR
+          + code generation for the seL4 Microkit platform with Rust comp
+          +onent implementations. The generated code is placed in `hamr/m
+          +icrokit/` under the project root (as specified by the `--outpu
+          +t-dir` configuration).                                        
+        4  
+        5 +## Overall Project Layout                                     
+        6 +                                                              
+        7 +A HAMR project has two main areas: the SysMLv2 model source an
+          +d the HAMR-generated output.                                  
+        8 +                                                              
+        9 +```                                                           
+       10 +<project-root>/                                               
+       11 +  sysmlv2/                          # SysMLv2 model source    
+       12 +    aadl-lib/                       # HAMR/AADL library defini
+          +tions (shared across projects)                                
+       13 +      aadl.library/                 # Standard AADL property s
+          +ets as SysMLv2                                                
+       14 +      hamr.aadl.library/            # HAMR-specific SysMLv2 de
+          +finitions (e.g., HAMR.sysml, HAMR_AADL.sysml)                 
+       15 +    <model-package>/                # Project-specific model f
+          +iles                                                          
+       16 +      <Model>.sysml                 # Main model file (include
+          +s //@ HAMR: config comment)                                   
+       17 +  hamr/                             # HAMR code generation out
+          +put (--output-dir target)                                     
+       18 +    microkit/                       # Platform-specific subfol
+          +der for Microkit target                                       
+       19 +      ...                           # (structure detailed belo
+          +w)                                                            
+       20 +```                                                           
+       21 +                                                              
+       22 +## Generated Microkit Folder Structure                        
+       23 +                                                              
+       24 +```                                                           
+       25 +hamr/microkit/                                                
+       26 +  Makefile                          # [auto-gen] Top-level Mak
+          +efile (build, test, verus targets)                            
+       27 +  system.mk                        # [auto-gen] Detailed build
+          + rules for all components                                     
+       28 +  microkit.system                   # [auto-gen*] Microkit sys
+          +tem description XML (protection domains, memory regions, chann
+          +els)                                                          
+       29 +  microkit.schedule.xml             # [editable] Static cyclic
+          + schedule (domain time slots)                                 
+       30 +  microkit.dot                      # [auto-gen] Graphviz visu
+          +alization of system architecture                              
+       31 +  build/                            # Build output directory  
+       32 +    Makefile                        # [auto-gen] Copy of syste
+          +m.mk used during build                                        
+       33 +  components/                       # C bridge/infrastructure 
+          +code for each thread component                                
+       34 +    <component>/                    # One directory per thread
+          + component                                                    
+       35 +      include/                                                
+       36 +        <component>.h               # [auto-gen] C header with
+          + type includes and declarations                               
+       37 +      src/                                                    
+       38 +        <component>.c               # [auto-gen] Main C entry 
+          +points (init, notified) and port get/put implementations      
+       39 +        <component>_MON.c           # [auto-gen] Monitor (sche
+          +duling dispatcher) that relays pacer notifications            
+       40 +        <component>_user.c          # [auto-gen] C-to-Rust FFI
+          + bridge (calls into Rust extern "C" functions)                
+       41 +    pacer/                          # Special HAMR-generated s
+          +cheduling component                                           
+       42 +      src/                                                    
+       43 +        pacer.c                     # [auto-gen] Implements st
+          +atic cyclic scheduling via Microkit notifications             
+       44 +  crates/                           # Rust crates             
+       45 +    data/                           # [auto-gen] Shared data t
+          +ype definitions                                               
+       46 +      Cargo.toml                                              
+       47 +      rust-toolchain.toml                                     
+       48 +      src/                                                    
+       49 +        lib.rs                      # [auto-gen] Crate root (r
+          +e-exports modules)                                            
+       50 +        sb_event_counter.rs         # [auto-gen] Event counter
+          + types for port communication                                 
+       51 +        sb_microkit_types.rs        # [auto-gen] Microkit type
+          + aliases (e.g., microkit_channel)                             
+       52 +        <PackageName>/              # Module per SysMLv2 packa
+          +ge containing data definitions                                
+       53 +          mod.rs                    # [auto-gen] Module declar
+          +ations                                                        
+       54 +          <DataType>.rs             # [auto-gen] Rust struct/e
+          +num for each model-level data type                            
+       55 +    <component>/                    # One Rust crate per threa
+          +d component                                                   
+       56 +      Cargo.toml                    # [auto-gen] Crate manifes
+          +t (dependencies: data, vstd, proptest, etc.)                  
+       57 +      Cargo.lock                    # [auto-gen] Dependency lo
+          +ck file                                                       
+       58 +      Makefile                      # [auto-gen] Crate-level b
+          +uild targets (build-release, test, verus)                     
+       59 +      rust-toolchain.toml           # [auto-gen] Rust toolchai
+          +n specification                                               
+       60 +      src/                                                    
+       61 +        lib.rs                      # [auto-gen] Crate root: w
+          +ires together modules, defines static app state and extern "C"
+          + entry points                                                 
+       62 +        logging.rs                  # [auto-gen] Logging initi
+          +alization                                                     
+       63 +        bridge/                     # [auto-gen] HAMR-generate
+          +d infrastructure code                                         
+       64 +          mod.rs                    # [auto-gen] Module declar
+          +ations                                                        
+       65 +          <component>_api.rs        # [auto-gen] Port API trai
+          +ts and Application_Api struct (get_/put_ methods with Verus co
+          +ntracts)                                                      
+       66 +          extern_c_api.rs           # [auto-gen] Extern "C" de
+          +clarations for port access (production uses Microkit shared me
+          +mory; test uses Mutex-guarded statics)                        
+       67 +          <component>_GUMBOX.rs     # [auto-gen] Executable (b
+          +oolean function) versions of GUMBO contracts for testing/monit
+          +oring                                                         
+       68 +        component/                  # Developer-editable appli
+          +cation code                                                   
+       69 +          mod.rs                    # [auto-gen] Module declar
+          +ations                                                        
+       70 +          <component>_app.rs        # [EDITABLE] Application l
+          +ogic: state struct, initialize and compute entry points       
+       71 +        test/                       # Test infrastructure     
+       72 +          mod.rs                    # [auto-gen] Module declar
+          +ations                                                        
+       73 +          tests.rs                  # [EDITABLE] Unit tests an
+          +d property-based test configurations                          
+       74 +          util/                                               
+       75 +            mod.rs                  # [auto-gen] Module declar
+          +ations                                                        
+       76 +            test_apis.rs            # [auto-gen] Test helper A
+          +PIs: put_/get_ for ports and GUMBO state variables, PreStateCo
+          +ntainer structs                                               
+       77 +            cb_apis.rs              # [auto-gen] Contract-base
+          +d test harness: testInitializeCB, testComputeCB, testComputeCB
+          +wGSV, PropTest macros                                         
+       78 +            generators.rs           # [auto-gen] PropTest valu
+          +e generators for each data type (default and customizable stra
+          +tegies)                                                       
+       79 +  types/                            # [auto-gen] Shared C type
+          + definitions for inter-component communication                
+       80 +    include/                                                  
+       81 +      sb_types.h                    # [auto-gen] Master type i
+          +nclude                                                        
+       82 +      sb_aadl_types.h               # [auto-gen] C struct defi
+          +nitions for model data types                                  
+       83 +      sb_event_counter.h            # [auto-gen] Event counter
+          + type for port communication                                  
+       84 +      sb_queue_<Type>_<size>.h      # [auto-gen] Lock-free que
+          +ue header for each data port connection type                  
+       85 +    src/                                                      
+       86 +      sb_queue_<Type>_<size>.c      # [auto-gen] Lock-free que
+          +ue implementation for each data port connection type          
+       87 +  util/                             # [auto-gen] C utility cod
+          +e                                                             
+       88 +    include/                                                  
+       89 +      printf.h                      # [auto-gen] Printf header
+       90 +      util.h                        # [auto-gen] Utility heade
+          +r                                                             
+       91 +    src/                                                      
+       92 +      printf.c                      # [auto-gen] Printf implem
+          +entation for Microkit (serial output)                         
+       93 +      util.c                        # [auto-gen] Utility funct
+          +ions                                                          
+       94 +```                                                           
+       95 +                                                              
+       96 +Legend:                                                       
+       97 +- **[auto-gen]** -- Fully auto-generated by HAMR. Overwritten 
+          +on every code generation run. Marked with `// Do not edit this
+          + file as it will be overwritten if codegen is rerun`.         
+       98 +- **[auto-gen*]** -- Auto-generated but contains `BEGIN CONTEN
+          +T MARKER` / `END CONTENT MARKER` regions where developer conte
+          +nt is preserved across re-generation.                         
+       99 +- **[EDITABLE]** -- Generated once with skeletons/templates. N
+          +ot overwritten on subsequent code generation runs. Marked with
+          + `// This file will not be overwritten if codegen is rerun`. C
+          +ontains `BEGIN MARKER` / `END MARKER` regions that HAMR auto-u
+          +pdates (e.g., contracts, state variable declarations) while pr
+          +eserving developer code outside those regions.                
+      100 +                                                              
+      101 +## Key Files for Developers                                   
+      102 +                                                              
+      103 +The developer's primary task is implementing application logic
+          + and writing tests. The key files to edit are:                
+      104 +                                                              
+      105 +### Application Logic: `crates/<component>/src/component/<comp
+          +onent>_app.rs`                                                
+      106 +                                                              
+      107 +This file contains the component's application state and entry
+          + point methods. On initial generation it contains:            
+      108 +- A **struct** for the component state, with GUMBO-declared st
+          +ate variables in `BEGIN MARKER STATE VARS` / `END MARKER STATE
+          + VARS` regions                                                
+      109 +- A **`new()`** constructor with initial values in marker regi
+          +ons                                                           
+      110 +- An **`initialize()`** entry point skeleton with GUMBO-genera
+          +ted `ensures` contracts in marker regions                     
+      111 +- A **`timeTriggered()`** (periodic) or event handler (sporadi
+          +c) entry point skeleton with GUMBO-generated `requires`/`ensur
+          +es` contracts in marker regions                               
+      112 +- A **`notify()`** method for unhandled Microkit channel notif
+          +ications                                                      
+      113 +- GUMBO-derived helper functions in `BEGIN MARKER GUMBO METHOD
+          +S` / `END MARKER GUMBO METHODS` regions                       
+      114 +                                                              
+      115 +The developer implements the bodies of `initialize()` and the 
+          +compute entry point(s), using port API methods:               
+      116 +- `api.get_<port_name>()` to read input port values           
+      117 +- `api.put_<port_name>(value)` to write output port values    
+      118 +                                                              
+      119 +### Tests: `crates/<component>/src/test/tests.rs`             
+      120 +                                                              
+      121 +This file contains unit tests. On initial generation it contai
+          +ns minimal skeleton tests. The developer writes:              
+      122 +                                                              
+      123 +1. **Manual unit tests** -- Directly construct inputs via `tes
+          +t_apis::put_<port>()`, invoke entry points, and check outputs 
+          +via `test_apis::get_<port>()` with assertions.                
+      124 +                                                              
+      125 +2. **Manual GUMBOX (contract-based) tests** -- Construct input
+          +s and call `cb_apis::testComputeCB()` or `cb_apis::testCompute
+          +CBwGSV()`, which automatically check pre/post conditions from 
+          +GUMBO contracts. Returns a `HarnessResult` (Passed, RejectedPr
+          +econdition, or FailedPostcondition).                          
+      126 +                                                              
+      127 +3. **Automated property-based GUMBOX tests** -- Use HAMR-gener
+          +ated macros (`testInitializeCB_macro!`, `testComputeCB_macro!`
+          +, `testComputeCBwGSV_macro!`) with PropTest to automatically g
+          +enerate random test vectors. The developer configures:        
+      128 +   - Number of test cases, rejection ratio, verbosity         
+      129 +   - Value generation strategies from `generators.rs` (default
+          + or custom ranges)                                            
+      130 +                                                              
+      131 +### Schedule: `microkit.schedule.xml`                         
+      132 +                                                              
+      133 +This file defines the static cyclic schedule. HAMR generates a
+          +n initial candidate schedule, and the developer may adjust tim
+          +e slot allocations. Each `<domain>` entry specifies a scheduli
+          +ng domain and its execution time within the major frame.      
+      134 +                                                              
+      135 +## Auto-Generated Infrastructure (Do Not Edit)                
+      136 +                                                              
+      137 +### C Bridge Layer (`components/`)                            
+      138 +                                                              
+      139 +For each thread component, HAMR generates C code that:        
+      140 +- **`<component>.c`** -- Implements the Microkit `init()` and 
+          +`notified()` entry points. Manages port queues (enqueue/dequeu
+          +e) via shared memory. Calls into Rust application code via ext
+          +ern "C" FFI.                                                  
+      141 +- **`<component>_MON.c`** -- A monitor protection domain that 
+          +receives pacer notifications and forwards them to the child co
+          +mponent's protection domain.                                  
+      142 +- **`<component>_user.c`** -- Thin C wrapper that calls the Ru
+          +st extern "C" functions.                                      
+      143 +                                                              
+      144 +### Rust Bridge Layer (`crates/<component>/src/bridge/`)      
+      145 +                                                              
+      146 +- **`<component>_api.rs`** -- Defines traits and the `Applicat
+          +ion_Api` struct that provide typed `get_`/`put_` methods for p
+          +orts. Initialize entry points only have `Put_Api` (no reading 
+          +inputs). Compute entry points have `Full_Api` (both get and pu
+          +t). Port access methods include Verus contracts derived from G
+          +UMBO integration constraints.                                 
+      147 +- **`extern_c_api.rs`** -- Provides the actual port read/write
+          + implementations. In production (no_std), these call C functio
+          +ns via FFI. In test mode, these use `Mutex<Option<T>>` statics
+          + for isolated testing.                                        
+      148 +- **`<component>_GUMBOX.rs`** -- Executable (boolean function)
+          + versions of all GUMBO contracts: integration assumptions, ini
+          +tialize post-conditions, compute pre-conditions and post-condi
+          +tions (including individual guarantee and case clauses). Used 
+          +by the test harness for runtime checking.                     
+      149 +                                                              
+      150 +### Rust Test Infrastructure (`crates/<component>/src/test/uti
+          +l/`)                                                          
+      151 +                                                              
+      152 +- **`test_apis.rs`** -- Provides `put_`/`get_` functions for a
+          +ll ports and GUMBO state variables. Also defines `PreStateCont
+          +ainer` and `PreStateContainer_wGSV` structs for bundling test 
+          +inputs.                                                       
+      153 +- **`cb_apis.rs`** -- Contract-based test harness functions (`
+          +testInitializeCB`, `testComputeCB`, `testComputeCBwGSV`) and P
+          +ropTest macros. These orchestrate: precondition check, port se
+          +tup, entry point invocation, output retrieval, and postconditi
+          +on check.                                                     
+      154 +- **`generators.rs`** -- PropTest strategies for generating ra
+          +ndom values of each data type. Provides `_default()` strategie
+          +s (full range) and `_cust()` strategies (parameterized ranges/
+          +biases).                                                      
+      155 +                                                              
+      156 +### Crate Root: `lib.rs`                                      
+      157 +                                                              
+      158 +Wires all modules together. Defines static mutable state for t
+          +he component application instance and API objects. Exposes `ex
+          +tern "C"` functions (`<component>_initialize`, `<component>_ti
+          +meTriggered`, `<component>_notify`) that are called from the C
+          + bridge layer. In test mode (`#[cfg(test)]`), includes the tes
+          +t module.                                                     
+      159 +                                                              
+      160 +### Shared Types (`types/`)                                   
+      161 +                                                              
+      162 +C header and source files implementing lock-free queues for in
+          +ter-component communication via shared memory. One queue type 
+          +is generated per unique data type/queue-size combination used 
+          +in port connections.                                          
+      163 +                                                              
+      164 +### Build System                                              
+      165 +                                                              
+      166 +- **`Makefile`** -- Top-level entry point with targets: `all` 
+          +(build system image), `test` (run component tests), `verus` (r
+          +un Verus verification), `qemu` (run on QEMU simulator), `clean
+          +`/`clobber`.                                                  
+      167 +- **`system.mk`** -- Detailed build rules: compiles C componen
+          +ts, invokes Rust crate builds, links ELF images, and runs the 
+          +Microkit tool to produce the final system image.              
+      168 +- **`microkit.system`** -- Microkit XML system description def
+          +ining protection domains (with nesting for MON/child pairs), s
+          +hared memory regions for port connections, and notification ch
+          +annels for scheduling.                                        
+      169 +- **`microkit.dot`** -- Graphviz DOT file visualizing the prot
+          +ection domain hierarchy, shared memory mappings, and notificat
+          +ion channels.                                                 
+
+⏺ The draft is written. Here's a summary of what the documentation covers:
+
+  Overall project layout -- Shows how the sysmlv2/ model source and
+  hamr/microkit/ generated output relate.
+
+  Complete folder tree with annotations for every file indicating whether it is:
+  - [auto-gen] -- overwritten every codegen run
+  - [auto-gen*] -- has content marker regions preserved across re-generation
+  - [EDITABLE] -- generated once as a skeleton, never overwritten
+
+  Key files for developers (the files they actually edit):
+  1. <component>_app.rs -- application logic (entry point implementations, using
+   get_/put_ APIs)
+  2. tests.rs -- three styles of testing: manual unit tests, manual GUMBOX
+  tests, automated PropTest-based GUMBOX tests
+  3. microkit.schedule.xml -- static cyclic schedule tuning
+
+  Auto-generated infrastructure (do not edit) with explanations of:
+  - C bridge layer (components/) -- .c, _MON.c, _user.c and their roles
+  - Rust bridge layer (bridge/) -- API traits, extern C bindings, GUMBOX
+  executable contracts
+  - Test infrastructure (test/util/) -- test APIs, contract-based harness,
+  PropTest generators
+  - lib.rs -- how it wires everything together with static state and extern "C"
+  entry points
+  - Shared types (types/) -- lock-free queues for shared memory communication
+  - Build system -- Makefile targets, system.mk, microkit.system, microkit.dot
+
+  Please review and let me know if anything needs correction or additional
+  detail.
+
+✻ Cogitated for 2m 31s
+
+❯ commit and push with message "Add Claude-generated HAMR Microkit folder   
+  structure documentation"                                                  
+
+⏺ Bash(git status)
+  ⎿  On branch main
+     Your branch is up to date with 'origin/main'.
+     … +11 lines (ctrl+o to expand)
+
+⏺ Bash(git diff --stat)
+  ⎿   hamr-claude-training/doc/folder-structure.md | 169 ++++++++++++++++++
+     ++++++++-
+      1 file changed, 167 insertions(+), 2 deletions(-)
+
+⏺ Bash(git log --oneline -3)
+  ⎿  c8e4b0d Claude generated documentation for MCP interfaces.
+     08009c0 Finish coding HAMR examples (skipping some testing, etc.)
+     82c4fc6 Initial commit (artifacts in a preliminary state - not ready f
+     or experiments yet)
+
+⏺ Bash(git add hamr-claude-training/doc/folder-structure.md && git commit -m
+      "Add Claude-generated HAMR Microkit folder structure documentation…)
+  ⎿  [main 5915066] Add Claude-generated HAMR Microkit folder structure doc
+     umentation
+      1 file changed, 167 insertions(+), 2 deletions(-)
+     … +2 lines (ctrl+o to expand)
+
+⏺ Done. Committed and pushed hamr-claude-training/doc/folder-structure.md (167
+  lines added, replacing the TBD placeholder).
+
+❯ commit and push with message "Small manual changes to HAMR Microkit       
+  folder structure documentation"                                           
+
+⏺ Bash(git status)
+  ⎿  On branch main
+     Your branch is up to date with 'origin/main'.
+     … +11 lines (ctrl+o to expand)
+
+⏺ Bash(git diff)
+  ⎿  diff --git a/hamr-claude-training/doc/folder-structure.md b/hamr-claud
+     e-training/doc/folder-structure.md
+     index f1009a0..b6be181 100644
+     … +76 lines (ctrl+o to expand)
+
+⏺ Bash(git add hamr-claude-training/doc/folder-structure.md && git commit -m
+      "Small manual changes to HAMR Microkit folder structure documentation…)
+  ⎿  [main f251213] Small manual changes to HAMR Microkit folder structure
+     documentation
+      1 file changed, 14 insertions(+), 9 deletions(-)
+     … +2 lines (ctrl+o to expand)
+
+⏺ Done. Your manual edits are committed and pushed -- moved the legend above the
+   tree, clarified descriptions, and added notes about developer-added state and
+   helper methods.
+
+❯ Before we work on the example application, tell me how my interactions    
+  with you can be logged so they can be studied by my research team.        
+
+⏺ There are several ways to capture Claude Code interactions for study:
+
+  1. Built-in Conversation Export
+
+  Claude Code has a /export slash command you can run at any point during a
+  conversation. It exports the full conversation transcript as a markdown file.
+  This is the simplest approach.
+
+  2. Conversation History Files
+
+  Claude Code automatically stores conversation transcripts on disk. They live
+  under:
+  ~/.claude/projects/<project-path-hash>/
+
+  Let me check what's already being stored for this project.
+
+⏺ Read 2 files (ctrl+o to expand)
+
+⏺ Our current conversation is already being logged as JSONL (240 lines so far).
+  Here's a summary of the options:
+
+  Options for Your Research Team
+
+  Option 1: /export (simplest)
+  - Run /export at the end of a session
+  - Produces a readable markdown transcript of the full conversation
+  - Good for human review
+
+  Option 2: Raw JSONL files (most complete)
+  - Located at ~/.claude/projects/<project-hash>/<session-id>.jsonl
+  - Contains every message, tool call, tool result, and metadata in structured
+  JSON
+  - Best for programmatic analysis -- each line is a JSON object with role,
+  content, timestamps, etc.
+  - A new .jsonl file is created per conversation session
+
+  Option 3: claude --output-format (for scripted/batch sessions)
+  - Running claude -p "prompt" --output-format json produces structured JSON
+  output
+  - Useful if you want to script specific tasks and capture results
+
+  Option 4: Hooks (real-time capture)
+  - Claude Code supports hooks in settings that execute shell commands on events
+   (e.g., before/after tool calls)
+  - Could be configured to log events to a custom location in real-time
+
+  Practical Recommendation
+
+  For your research team's purposes, I'd suggest:
+
+  1. During sessions: Just work normally. The JSONL logs are captured
+  automatically.
+  2. At session end: Run /export to get a human-readable markdown version.
+  3. For analysis: Copy the .jsonl files from ~/.claude/projects/ -- they
+  contain the richest data (all messages, tool invocations, responses, timing).
+
+  You could add a folder in your project (e.g., interaction-logs/) and copy
+  exported transcripts there after each session to keep them with the project
+  and under version control. Would you like me to set that up?
+
+✻ Brewed for 30s
+
+❯ yes, set that up 
+
+⏺ Read 1 file (ctrl+o to expand)
+
+⏺ Bash(mkdir -p /Users/hatcliff/Dev/Claude/HAMR-Claude-configuration-experiments
+      -git/interaction-logs)
+  ⎿  Done
+
+⏺ Write(interaction-logs/README.md)
+  ⎿  Wrote 35 lines to interaction-logs/README.md
+       1 # Interaction Logs
+       2 
+       3 This folder stores logs of Claude Code interactions for study by
+          the research team.
+       4 
+       5 ## How to Save Logs
+       6 
+       7 ### After each session
+       8 
+       9 1. **Export a readable transcript**: Run `/export` in Claude Cod
+         e at the end of a session. Save the resulting markdown file to t
+         his folder with a descriptive name, e.g.:
+      10    ```
+     … +25 lines (ctrl+o to expand)
+
+⏺ Now let me copy the current session's JSONL log into the folder.
+
+⏺ Bash(cp /Users/hatcliff/.claude/projects/-Users-hatcliff-Dev-Claude-HAMR-Claud
+      e-configuration-experiments-git/3b12f0ad-9975-427c-8150-b95f4ba239f6.jsonl
+       /Users/hatcl…)
+  ⎿  Done
+
+⏺ Done. Here's what was set up:
+
+  - interaction-logs/ folder created at the project root
+  - interaction-logs/README.md with instructions on how to save logs (naming
+  convention, /export usage, JSONL copy commands)
+  - interaction-logs/2026-02-15-project-setup-and-docs.jsonl -- a copy of this
+  session's raw log
+
+  At the end of this session, you can also run /export and save the markdown
+  file there for a human-readable version. Note that the JSONL copy is a
+  snapshot from this moment -- you may want to re-copy it at the end of the
+  session to capture the complete conversation.
