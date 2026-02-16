@@ -1,0 +1,103 @@
+// This file will not be overwritten if codegen is rerun
+
+use data::*;
+use crate::bridge::gate_gate_api::*;
+use vstd::prelude::*;
+
+verus! {
+
+  pub struct gate_gate {
+    // PLACEHOLDER MARKER STATE VARS
+  }
+
+  impl gate_gate {
+    pub fn new() -> Self
+    {
+      Self {
+        // PLACEHOLDER MARKER STATE VAR INIT
+      }
+    }
+
+    pub fn initialize<API: gate_gate_Put_Api> (
+      &mut self,
+      api: &mut gate_gate_Application_Api<API>)
+      ensures
+        // PLACEHOLDER MARKER INITIALIZATION ENSURES
+    {
+      log_info("initialize entrypoint invoked");
+      // No output ports to initialize (EventDataPort does not require initialization)
+    }
+
+    pub fn timeTriggered<API: gate_gate_Full_Api> (
+      &mut self,
+      api: &mut gate_gate_Application_Api<API>)
+      requires
+        // PLACEHOLDER MARKER TIME TRIGGERED REQUIRES
+      ensures
+        // PLACEHOLDER MARKER TIME TRIGGERED ENSURES
+    {
+      // Gate implements message drop/pass policies:
+      //   Req_TS: TopSecret messages are dropped
+      //   Req_S_1: Secret messages are passed through
+      //   Req_P: Public messages are passed through
+
+      let input_contents = api.get_input();
+      match input_contents {
+        Some(msg) => {
+          if msg.security_level == SNG_Data_Model::SecurityLevel::TopSecret {
+            // Req_TS: drop TopSecret messages
+            log_message_dropped(msg);
+          } else {
+            // Req_S_1, Req_P: pass Secret and Public messages through
+            api.put_output(msg);
+            log_message_passed(msg);
+          }
+        }
+        None => {
+          // no message present on input port
+        }
+      };
+    }
+
+    pub fn notify(
+      &mut self,
+      channel: microkit_channel)
+    {
+      // this method is called when the monitor does not handle the passed in channel
+      match channel {
+        _ => {
+          log_warn_channel(channel)
+        }
+      }
+    }
+  }
+
+  #[verifier::external_body]
+  pub fn log_info(msg: &str)
+  {
+    log::info!("{0}", msg);
+  }
+
+  #[verifier::external_body]
+  pub fn log_message_dropped(msg: SNG_Data_Model::Message)
+  {
+    log::info!("Gate: DROPPED message (security_level={0:?}, payload={1})",
+      msg.security_level, msg.payload);
+  }
+
+  #[verifier::external_body]
+  pub fn log_message_passed(msg: SNG_Data_Model::Message)
+  {
+    log::info!("Gate: PASSED message (security_level={0:?}, payload={1})",
+      msg.security_level, msg.payload);
+  }
+
+  #[verifier::external_body]
+  pub fn log_warn_channel(channel: u32)
+  {
+    log::warn!("Unexpected channel: {0}", channel);
+  }
+
+  // PLACEHOLDER MARKER GUMBO METHODS
+
+}

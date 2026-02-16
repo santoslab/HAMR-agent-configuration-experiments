@@ -1,0 +1,94 @@
+digraph microkit {
+  compound=true;
+
+  // protection domains
+  graph [style=rounded]
+  subgraph cluster_gate_gate_MON {
+    label = "gate_gate_MON";
+    gate_gate_MON_INVIS [label="", style=invis, width=.5, height=.5, fixedsize=true]
+
+    graph [style=rounded]
+    subgraph cluster_gate_gate {
+      label = "gate_gate";
+      gate_gate_INVIS [label="", style=invis, width=.5, height=.5, fixedsize=true]
+
+      pd_gate_gate_output_queue_1 [label=output_queue_1];
+      pd_gate_gate_input_queue_1 [label=input_queue_1];
+    }
+  }
+
+  graph [style=rounded]
+  subgraph cluster_msg_filter_msg_filter_MON {
+    label = "msg_filter_msg_filter_MON";
+    msg_filter_msg_filter_MON_INVIS [label="", style=invis, width=.5, height=.5, fixedsize=true]
+
+    graph [style=rounded]
+    subgraph cluster_msg_filter_msg_filter {
+      label = "msg_filter_msg_filter";
+      msg_filter_msg_filter_INVIS [label="", style=invis, width=.5, height=.5, fixedsize=true]
+
+      pd_msg_filter_msg_filter_input_queue_1 [label=input_queue_1];
+      pd_msg_filter_msg_filter_output_queue_1 [label=output_queue_1];
+    }
+  }
+
+  graph [style=rounded]
+  subgraph cluster_test_sender_test_sender_MON {
+    label = "test_sender_test_sender_MON";
+    test_sender_test_sender_MON_INVIS [label="", style=invis, width=.5, height=.5, fixedsize=true]
+
+    graph [style=rounded]
+    subgraph cluster_test_sender_test_sender {
+      label = "test_sender_test_sender";
+      test_sender_test_sender_INVIS [label="", style=invis, width=.5, height=.5, fixedsize=true]
+
+      pd_test_sender_test_sender_output_queue_1 [label=output_queue_1];
+    }
+  }
+
+  graph [style=rounded]
+  subgraph cluster_test_receiver_test_receiver_MON {
+    label = "test_receiver_test_receiver_MON";
+    test_receiver_test_receiver_MON_INVIS [label="", style=invis, width=.5, height=.5, fixedsize=true]
+
+    graph [style=rounded]
+    subgraph cluster_test_receiver_test_receiver {
+      label = "test_receiver_test_receiver";
+      test_receiver_test_receiver_INVIS [label="", style=invis, width=.5, height=.5, fixedsize=true]
+
+      pd_test_receiver_test_receiver_input_queue_1 [label=input_queue_1];
+    }
+  }
+
+  graph [style=rounded]
+  subgraph cluster_pacer {
+    label = "pacer";
+    pacer_INVIS [label="", style=invis, width=.5, height=.5, fixedsize=true]
+
+  }
+
+  // memory regions
+  SNG_System_Instance_gate_gate_output_1_Memory_Region;
+
+  SNG_System_Instance_msg_filter_msg_filter_output_1_Memory_Region;
+
+  SNG_System_Instance_test_sender_test_sender_output_1_Memory_Region;
+
+  // channels
+  pacer_INVIS -> gate_gate_MON_INVIS [lhead=cluster_gate_gate_MON, minlen=2, dir=both];
+  gate_gate_MON_INVIS -> gate_gate_INVIS [lhead=cluster_gate_gate, minlen=2, dir=both];
+  pacer_INVIS -> msg_filter_msg_filter_MON_INVIS [lhead=cluster_msg_filter_msg_filter_MON, minlen=2, dir=both];
+  msg_filter_msg_filter_MON_INVIS -> msg_filter_msg_filter_INVIS [lhead=cluster_msg_filter_msg_filter, minlen=2, dir=both];
+  pacer_INVIS -> test_sender_test_sender_MON_INVIS [lhead=cluster_test_sender_test_sender_MON, minlen=2, dir=both];
+  test_sender_test_sender_MON_INVIS -> test_sender_test_sender_INVIS [lhead=cluster_test_sender_test_sender, minlen=2, dir=both];
+  pacer_INVIS -> test_receiver_test_receiver_MON_INVIS [lhead=cluster_test_receiver_test_receiver_MON, minlen=2, dir=both];
+  test_receiver_test_receiver_MON_INVIS -> test_receiver_test_receiver_INVIS [lhead=cluster_test_receiver_test_receiver, minlen=2, dir=both];
+
+  // shared memory mappings
+  pd_gate_gate_output_queue_1 -> SNG_System_Instance_gate_gate_output_1_Memory_Region [dir=both, style=dashed];
+  pd_gate_gate_input_queue_1 -> SNG_System_Instance_test_sender_test_sender_output_1_Memory_Region [dir=back, style=dashed];
+  pd_msg_filter_msg_filter_input_queue_1 -> SNG_System_Instance_gate_gate_output_1_Memory_Region [dir=back, style=dashed];
+  pd_msg_filter_msg_filter_output_queue_1 -> SNG_System_Instance_msg_filter_msg_filter_output_1_Memory_Region [dir=both, style=dashed];
+  pd_test_sender_test_sender_output_queue_1 -> SNG_System_Instance_test_sender_test_sender_output_1_Memory_Region [dir=both, style=dashed];
+  pd_test_receiver_test_receiver_input_queue_1 -> SNG_System_Instance_msg_filter_msg_filter_output_1_Memory_Region [dir=back, style=dashed];
+}
