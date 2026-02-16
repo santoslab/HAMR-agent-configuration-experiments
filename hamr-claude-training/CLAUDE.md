@@ -10,7 +10,8 @@ Documentation is in the folder @doc.  The primary contents are as follows:
 
 - HAMR Overview - @doc/hamr-overview.md contains a summary of HAMR's overall purpose, nature of its input and output artifacts, and develop workflows.
 - Project Folder Structure - @doc/folder-structure.md contains a summary of the folder structure that every HAMR project follows
-- Technical Approach - @doc/technical-approach.md explains the semantics of HAMR thread component execution. 
+- Technical Approach - @doc/technical-approach.md explains the semantics of HAMR thread component execution.
+- MCP Tools Reference - @doc/mcp-tools.md documents the Sireum MCP tools available for HAMR development, including type checking, code generation, configuration, and formal verification.
 
 ## Examples
 
