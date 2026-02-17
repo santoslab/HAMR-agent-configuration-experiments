@@ -14,6 +14,10 @@ Ask Claude to help improve the training material so that Claude can use it to wo
 
 To evaluate the effectiveness of the @hamr-claude-training contents and to discover what additional information needs to be added to it to improve Claude performance, an evaluation HAMR project is in the @evaluation-project folder.  Claude will be asked to consult the @hamr-clause-training material and then help perform development tasks for the @evaluation-project.  Based on situations where Claude doesn't perform a task well on the evaluation project, the contents of @hamr-claude-training will be updated to provided better context information to Claude.
 
+# Change Reports
+
+When changes span multiple artifact levels (requirements, models, code), Claude should generate an auditable change report following the template in `@evaluation-project/reports/CHANGE-REPORT-GUIDE.md`. Reports are stored in `@evaluation-project/reports/` with the naming convention `CR-<NNN>-<short-description>.md`. The report must include traceability matrices connecting requirements to model elements, generated code, developer-written code, and tests. See `CR-001-security-level-rename.md` for an example.
+
 # Assessment
 
 My colleagues and I are trying to understand how to best use Claude.  Therefore we would like Claude to produce a log of interactions with it.
