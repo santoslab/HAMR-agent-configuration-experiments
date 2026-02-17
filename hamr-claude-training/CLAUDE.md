@@ -13,6 +13,9 @@ Documentation is in the folder @doc.  The primary contents are as follows:
 - Technical Approach - @doc/technical-approach.md explains the semantics of HAMR thread component execution.
 - Use of AADL Concepts in SysMLv2 - @doc/sysmlv2-aadl-concepts.md illustrates how the SysMLv2 AADL libraries are used to represent AADL concepts in SysMLv2.  It also provides some intuition about how each of these concepts are interpresented in seL4 Microkit code generation.
 - MCP Tools Reference - @doc/mcp-tools.md documents the Sireum MCP tools available for HAMR development, including type checking, code generation, configuration, and formal verification.
+- Modeling Tips - @doc/modeling-tips.md contains practical tips and known issues for SysMLv2 modeling with HAMR, including keyword conflicts, architecture constraints, GUMBO gotchas, and common patterns.
+- Component Implementation Guide - @doc/component-implementation-guide.md explains how to implement Rust application logic for HAMR thread components, including Verus blocks, port API usage, logging, and complete examples.
+- Testing Guide - @doc/testing-guide.md describes how to test HAMR components using the generated test infrastructure, covering manual unit tests, GUMBOX contract-based tests, and automated PropTest property-based tests.
 
 ## Examples
 
