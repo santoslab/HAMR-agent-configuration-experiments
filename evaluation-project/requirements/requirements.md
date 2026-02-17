@@ -26,18 +26,18 @@ The SNG implementation artifacts include simple system test harness to send simu
 
 - SNG shall process messages with two fields:
     - security_level - security level of message
-        Values: Public, Secret TopSecret
+        Values: Public, Restricted, Critical
     - payload - message payload
         Values: 32-bit signed integers
 
 # System Requirements
 
-- Req_TS: No top-secret messages received through the ingress port are emitted through the egress port (all top-secret messages are dropped)
-- Req_S_1: All secret messages received through the ingress port shall be emitted through the egress port 
-- Req_S_2: Each secret message InS received through the ingress port shall have a modified version OutS flowing through the output port with the following relationship between InS and OutS:
-   (a) if the payload of InS is greater than 100, the payload  of OutS is modified to have the value of 100,
-   (b) if the payload of InS is less than 0, the payload of OutS is modified to have the value of 0, and
-   (c) if the payload of InS is greater than or equal to 0 and less than or equal to 100, the payload of OutS is unchanged
+- Req_C: No critical messages received through the ingress port are emitted through the egress port (all critical messages are dropped)
+- Req_R_1: All restricted messages received through the ingress port shall be emitted through the egress port
+- Req_R_2: Each restricted message InR received through the ingress port shall have a modified version OutR flowing through the output port with the following relationship between InR and OutR:
+   (a) if the payload of InR is greater than 100, the payload  of OutR is modified to have the value of 100,
+   (b) if the payload of InR is less than 0, the payload of OutR is modified to have the value of 0, and
+   (c) if the payload of InR is greater than or equal to 0 and less than or equal to 100, the payload of OutR is unchanged
 - Req_P: All public messages received through the ingress port are emitted through the egress port with their contents unchanged
 
 # Design Expectations
