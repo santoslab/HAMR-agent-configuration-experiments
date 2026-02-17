@@ -30,13 +30,13 @@ pub fn SNG_Data_Model_SecurityLevel_strategy_default() -> impl Strategy<Value = 
 
 pub fn SNG_Data_Model_SecurityLevel_strategy_cust(
   Public_bias: u32,
-  Secret_bias: u32,
-  TopSecret_bias: u32) -> impl Strategy<Value = SNG_Data_Model::SecurityLevel>
+  Restricted_bias: u32,
+  Critical_bias: u32) -> impl Strategy<Value = SNG_Data_Model::SecurityLevel>
 {
   prop_oneof![
     Public_bias => Just(SNG_Data_Model::SecurityLevel::Public),
-    Secret_bias => Just(SNG_Data_Model::SecurityLevel::Secret),
-    TopSecret_bias => Just(SNG_Data_Model::SecurityLevel::TopSecret)
+    Restricted_bias => Just(SNG_Data_Model::SecurityLevel::Restricted),
+    Critical_bias => Just(SNG_Data_Model::SecurityLevel::Critical)
   ]
 }
 

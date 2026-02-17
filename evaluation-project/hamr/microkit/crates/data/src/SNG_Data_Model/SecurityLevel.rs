@@ -9,8 +9,8 @@ verus! {
   #[derive(Copy, Clone, Debug, PartialEq, Eq)]
   pub enum SecurityLevel {
     pub Public = 0,
-    pub Secret = 1,
-    pub TopSecret = 2,
+    pub Restricted = 1,
+    pub Critical = 2,
   }
 
   impl Default for SecurityLevel {

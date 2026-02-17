@@ -45,13 +45,13 @@ verus! {
         // PLACEHOLDER MARKER TIME TRIGGERED ENSURES
     {
       // Generate test messages that exercise all requirements:
-      //   Case 0: Public,    payload=42   -> Gate passes, Filter passes unchanged
-      //   Case 1: Secret,    payload=50   -> Gate passes, Filter passes unchanged (in range)
-      //   Case 2: TopSecret, payload=99   -> Gate DROPS
-      //   Case 3: Secret,    payload=150  -> Gate passes, Filter clamps to 100
-      //   Case 4: Public,    payload=0    -> Gate passes, Filter passes unchanged
-      //   Case 5: Secret,    payload=-10  -> Gate passes, Filter clamps to 0
-      //   Case 6: TopSecret, payload=200  -> Gate DROPS
+      //   Case 0: Public,     payload=42   -> Gate passes, Filter passes unchanged
+      //   Case 1: Restricted, payload=50   -> Gate passes, Filter passes unchanged (in range)
+      //   Case 2: Critical,   payload=99   -> Gate DROPS
+      //   Case 3: Restricted, payload=150  -> Gate passes, Filter clamps to 100
+      //   Case 4: Public,     payload=0    -> Gate passes, Filter passes unchanged
+      //   Case 5: Restricted, payload=-10  -> Gate passes, Filter clamps to 0
+      //   Case 6: Critical,   payload=200  -> Gate DROPS
 
       let msg = build_test_message(self.test_case_index);
       api.put_output(msg);
@@ -85,17 +85,17 @@ verus! {
     if index == 0 {
       SNG_Data_Model::Message { security_level: SNG_Data_Model::SecurityLevel::Public, payload: 42 }
     } else if index == 1 {
-      SNG_Data_Model::Message { security_level: SNG_Data_Model::SecurityLevel::Secret, payload: 50 }
+      SNG_Data_Model::Message { security_level: SNG_Data_Model::SecurityLevel::Restricted, payload: 50 }
     } else if index == 2 {
-      SNG_Data_Model::Message { security_level: SNG_Data_Model::SecurityLevel::TopSecret, payload: 99 }
+      SNG_Data_Model::Message { security_level: SNG_Data_Model::SecurityLevel::Critical, payload: 99 }
     } else if index == 3 {
-      SNG_Data_Model::Message { security_level: SNG_Data_Model::SecurityLevel::Secret, payload: 150 }
+      SNG_Data_Model::Message { security_level: SNG_Data_Model::SecurityLevel::Restricted, payload: 150 }
     } else if index == 4 {
       SNG_Data_Model::Message { security_level: SNG_Data_Model::SecurityLevel::Public, payload: 0 }
     } else if index == 5 {
-      SNG_Data_Model::Message { security_level: SNG_Data_Model::SecurityLevel::Secret, payload: -10 }
+      SNG_Data_Model::Message { security_level: SNG_Data_Model::SecurityLevel::Restricted, payload: -10 }
     } else {
-      SNG_Data_Model::Message { security_level: SNG_Data_Model::SecurityLevel::TopSecret, payload: 200 }
+      SNG_Data_Model::Message { security_level: SNG_Data_Model::SecurityLevel::Critical, payload: 200 }
     }
   }
 

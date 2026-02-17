@@ -16,16 +16,16 @@ macro_rules! impliesL {
 
 /** I-Guar: Integration constraint on gate's outgoing event data port output
   *
-  * guarantee No_TopSecret_Output
+  * guarantee No_Critical_Output
   */
 pub fn I_Guar_output(output: SNG_Data_Model::Message) -> bool
 {
-  output.security_level != SNG_Data_Model::SecurityLevel::TopSecret
+  output.security_level != SNG_Data_Model::SecurityLevel::Critical
 }
 
 /** I-Guar: Integration constraint on gate's outgoing event data port output
   *
-  * guarantee No_TopSecret_Output
+  * guarantee No_Critical_Output
   */
 pub fn I_Guar_Guard_output(output: Option<SNG_Data_Model::Message>) -> bool
 {

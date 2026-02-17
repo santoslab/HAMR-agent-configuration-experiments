@@ -16,16 +16,16 @@ macro_rules! impliesL {
 
 /** I-Assm: Integration constraint on msg_filter's incoming event data port input
   *
-  * assume No_TopSecret_Input
+  * assume No_Critical_Input
   */
 pub fn I_Assm_input(input: SNG_Data_Model::Message) -> bool
 {
-  input.security_level != SNG_Data_Model::SecurityLevel::TopSecret
+  input.security_level != SNG_Data_Model::SecurityLevel::Critical
 }
 
 /** I-Assm: Integration constraint on msg_filter's incoming event data port input
   *
-  * assume No_TopSecret_Input
+  * assume No_Critical_Input
   */
 pub fn I_Assm_Guard_input(input: Option<SNG_Data_Model::Message>) -> bool
 {

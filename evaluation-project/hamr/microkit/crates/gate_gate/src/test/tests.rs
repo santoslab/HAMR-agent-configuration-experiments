@@ -4,8 +4,8 @@
 //  Gate Component Tests
 //
 //  The Gate implements message drop/pass policies:
-//    Req_TS:  TopSecret messages are dropped (no output)
-//    Req_S_1: Secret messages are passed through unchanged
+//    Req_C:   Critical messages are dropped (no output)
+//    Req_R_1: Restricted messages are passed through unchanged
 //    Req_P:   Public messages are passed through unchanged
 //
 //  Three styles of testing are illustrated:
@@ -45,89 +45,89 @@ mod tests {
   }
 
   //========================================================================
-  //  Req_TS: TopSecret messages are dropped
+  //  Req_C: Critical messages are dropped
   //========================================================================
 
   #[test]
   #[serial]
-  fn test_Req_TS_drop_top_secret() {
+  fn test_Req_C_drop_critical() {
     let msg = SNG_Data_Model::Message {
-      security_level: SNG_Data_Model::SecurityLevel::TopSecret,
+      security_level: SNG_Data_Model::SecurityLevel::Critical,
       payload: 42,
     };
     let output = run_gate(Some(msg));
-    assert!(output.is_none(), "TopSecret message should be dropped");
+    assert!(output.is_none(), "Critical message should be dropped");
   }
 
   #[test]
   #[serial]
-  fn test_Req_TS_drop_top_secret_negative_payload() {
+  fn test_Req_C_drop_critical_negative_payload() {
     let msg = SNG_Data_Model::Message {
-      security_level: SNG_Data_Model::SecurityLevel::TopSecret,
+      security_level: SNG_Data_Model::SecurityLevel::Critical,
       payload: -100,
     };
     let output = run_gate(Some(msg));
-    assert!(output.is_none(), "TopSecret message should be dropped regardless of payload");
+    assert!(output.is_none(), "Critical message should be dropped regardless of payload");
   }
 
   #[test]
   #[serial]
-  fn test_Req_TS_drop_top_secret_zero_payload() {
+  fn test_Req_C_drop_critical_zero_payload() {
     let msg = SNG_Data_Model::Message {
-      security_level: SNG_Data_Model::SecurityLevel::TopSecret,
+      security_level: SNG_Data_Model::SecurityLevel::Critical,
       payload: 0,
     };
     let output = run_gate(Some(msg));
-    assert!(output.is_none(), "TopSecret message should be dropped regardless of payload");
+    assert!(output.is_none(), "Critical message should be dropped regardless of payload");
   }
 
   #[test]
   #[serial]
-  fn test_Req_TS_drop_top_secret_max_payload() {
+  fn test_Req_C_drop_critical_max_payload() {
     let msg = SNG_Data_Model::Message {
-      security_level: SNG_Data_Model::SecurityLevel::TopSecret,
+      security_level: SNG_Data_Model::SecurityLevel::Critical,
       payload: i32::MAX,
     };
     let output = run_gate(Some(msg));
-    assert!(output.is_none(), "TopSecret message should be dropped regardless of payload");
+    assert!(output.is_none(), "Critical message should be dropped regardless of payload");
   }
 
   //========================================================================
-  //  Req_S_1: Secret messages are passed through unchanged
+  //  Req_R_1: Restricted messages are passed through unchanged
   //========================================================================
 
   #[test]
   #[serial]
-  fn test_Req_S1_pass_secret() {
+  fn test_Req_R1_pass_restricted() {
     let msg = SNG_Data_Model::Message {
-      security_level: SNG_Data_Model::SecurityLevel::Secret,
+      security_level: SNG_Data_Model::SecurityLevel::Restricted,
       payload: 50,
     };
     let output = run_gate(Some(msg));
-    assert!(output == Some(msg), "Secret message should be passed through unchanged");
+    assert!(output == Some(msg), "Restricted message should be passed through unchanged");
   }
 
   #[test]
   #[serial]
-  fn test_Req_S1_pass_secret_negative_payload() {
+  fn test_Req_R1_pass_restricted_negative_payload() {
     let msg = SNG_Data_Model::Message {
-      security_level: SNG_Data_Model::SecurityLevel::Secret,
+      security_level: SNG_Data_Model::SecurityLevel::Restricted,
       payload: -10,
     };
     let output = run_gate(Some(msg));
-    assert!(output == Some(msg), "Secret message should be passed through unchanged by Gate");
+    assert!(output == Some(msg), "Restricted message should pass through unchanged by Gate");
   }
 
   #[test]
   #[serial]
-  fn test_Req_S1_pass_secret_large_payload() {
+  fn test_Req_R1_pass_restricted_large_payload() {
     let msg = SNG_Data_Model::Message {
-      security_level: SNG_Data_Model::SecurityLevel::Secret,
+      security_level: SNG_Data_Model::SecurityLevel::Restricted,
       payload: 150,
     };
     let output = run_gate(Some(msg));
     assert!(output == Some(msg),
-      "Gate should pass Secret messages through without modifying payload (Filter handles clamping)");
+      "Gate should pass Restricted messages through without modifying payload (Filter handles clamping)");
   }
 
   //========================================================================
@@ -179,17 +179,17 @@ mod tests {
   }
 
   //========================================================================
-  //  Integration constraint: output never has TopSecret security_level
+  //  Integration constraint: output never has Critical security_level
   //========================================================================
 
   #[test]
   #[serial]
-  fn test_integration_output_never_top_secret() {
-    // Verify that for every security level, the output is never TopSecret
+  fn test_integration_output_never_critical() {
+    // Verify that for every security level, the output is never Critical
     let levels = [
       SNG_Data_Model::SecurityLevel::Public,
-      SNG_Data_Model::SecurityLevel::Secret,
-      SNG_Data_Model::SecurityLevel::TopSecret,
+      SNG_Data_Model::SecurityLevel::Restricted,
+      SNG_Data_Model::SecurityLevel::Critical,
     ];
     for level in levels {
       let msg = SNG_Data_Model::Message {
@@ -198,8 +198,8 @@ mod tests {
       };
       let output = run_gate(Some(msg));
       if let Some(out_msg) = output {
-        assert!(out_msg.security_level != SNG_Data_Model::SecurityLevel::TopSecret,
-          "Output should never have TopSecret security level (GUMBO guarantee No_TopSecret_Output)");
+        assert!(out_msg.security_level != SNG_Data_Model::SecurityLevel::Critical,
+          "Output should never have Critical security level (GUMBO guarantee No_Critical_Output)");
       }
     }
   }
@@ -209,7 +209,7 @@ mod tests {
 //  Manual GUMBOX (contract-based) Tests
 //
 //  These use cb_apis::testComputeCB to automatically check
-//  the GUMBO integration constraints (No_TopSecret_Output)
+//  the GUMBO integration constraints (No_Critical_Output)
 //  against the component's actual output.
 //================================================================
 
@@ -219,26 +219,26 @@ mod GUMBOX_manual_tests {
   use crate::test::util::*;
   use data::*;
 
-  //-- Req_TS: TopSecret messages dropped --
+  //-- Req_C: Critical messages dropped --
 
   #[test]
   #[serial]
-  fn test_GUMBOX_Req_TS_top_secret_dropped() {
+  fn test_GUMBOX_Req_C_critical_dropped() {
     let input = Some(SNG_Data_Model::Message {
-      security_level: SNG_Data_Model::SecurityLevel::TopSecret,
+      security_level: SNG_Data_Model::SecurityLevel::Critical,
       payload: 99,
     });
     let result = cb_apis::testComputeCB(input);
     assert!(matches!(result, cb_apis::HarnessResult::Passed));
   }
 
-  //-- Req_S_1: Secret messages passed --
+  //-- Req_R_1: Restricted messages passed --
 
   #[test]
   #[serial]
-  fn test_GUMBOX_Req_S1_secret_passed() {
+  fn test_GUMBOX_Req_R1_restricted_passed() {
     let input = Some(SNG_Data_Model::Message {
-      security_level: SNG_Data_Model::SecurityLevel::Secret,
+      security_level: SNG_Data_Model::SecurityLevel::Restricted,
       payload: 50,
     });
     let result = cb_apis::testComputeCB(input);
@@ -275,8 +275,8 @@ mod GUMBOX_manual_tests {
     let payloads = [i32::MIN, -1, 0, 1, 100, 101, i32::MAX];
     let levels = [
       SNG_Data_Model::SecurityLevel::Public,
-      SNG_Data_Model::SecurityLevel::Secret,
-      SNG_Data_Model::SecurityLevel::TopSecret,
+      SNG_Data_Model::SecurityLevel::Restricted,
+      SNG_Data_Model::SecurityLevel::Critical,
     ];
     for level in levels {
       for payload in payloads {
@@ -333,9 +333,9 @@ mod GUMBOX_tests {
     api_input: generators::option_strategy_default(generators::SNG_Data_Model_Message_strategy_default())
   }
 
-  // Custom strategy: bias toward TopSecret to stress-test the drop path
+  // Custom strategy: bias toward Critical to stress-test the drop path
   testComputeCB_macro! {
-    prop_testComputeCB_TopSecret_biased,
+    prop_testComputeCB_Critical_biased,
     config: ProptestConfig {
       cases: numValidComputeTestCases,
       max_global_rejects: numValidComputeTestCases * computeRejectRatio,
@@ -348,8 +348,8 @@ mod GUMBOX_tests {
         any::<i32>(),
         generators::SNG_Data_Model_SecurityLevel_strategy_cust(
           1,  // Public
-          1,  // Secret
-          5   // TopSecret (heavily biased)
+          1,  // Restricted
+          5   // Critical (heavily biased)
         )
       )
     )

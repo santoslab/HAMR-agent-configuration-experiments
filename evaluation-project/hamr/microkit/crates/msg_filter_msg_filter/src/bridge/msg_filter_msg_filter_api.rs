@@ -25,8 +25,8 @@ verus! {
       ensures
         res == value@,
         (res.is_none() ||
-          // assume No_TopSecret_Input
-          res.unwrap().security_level != SNG_Data_Model::SecurityLevel::TopSecret),
+          // assume No_Critical_Input
+          res.unwrap().security_level != SNG_Data_Model::SecurityLevel::Critical),
     {
       return extern_api::unsafe_get_input();
     }
@@ -61,8 +61,8 @@ verus! {
         res == self.input,
         old(self).output == self.output,
         (res.is_none() ||
-          // assume No_TopSecret_Input
-          res.unwrap().security_level != SNG_Data_Model::SecurityLevel::TopSecret),
+          // assume No_Critical_Input
+          res.unwrap().security_level != SNG_Data_Model::SecurityLevel::Critical),
     {
       self.api.unverified_get_input(&Ghost(self.input))
     }

@@ -38,9 +38,9 @@ verus! {
     {
       // Filter implements payload sanitization:
       //   Req_P: Public messages pass unchanged
-      //   Req_S_2: Secret message payloads are clamped to [0,100]
-      // Note: TopSecret messages never arrive here (guaranteed by Gate upstream,
-      //       enforced by GUMBO integration assume No_TopSecret_Input)
+      //   Req_R_2: Restricted message payloads are clamped to [0,100]
+      // Note: Critical messages never arrive here (guaranteed by Gate upstream,
+      //       enforced by GUMBO integration assume No_Critical_Input)
 
       let input_contents = api.get_input();
       match input_contents {
@@ -50,16 +50,16 @@ verus! {
             api.put_output(msg);
             log_message_passed(msg);
           } else {
-            // Secret messages: clamp payload to [0, 100]
+            // Restricted messages: clamp payload to [0, 100]
             let clamped_payload: i32;
             if msg.payload > 100 {
-              // Req_S_2a: payload > 100 clamped to 100
+              // Req_R_2a: payload > 100 clamped to 100
               clamped_payload = 100;
             } else if msg.payload < 0 {
-              // Req_S_2b: payload < 0 clamped to 0
+              // Req_R_2b: payload < 0 clamped to 0
               clamped_payload = 0;
             } else {
-              // Req_S_2c: payload in [0,100] unchanged
+              // Req_R_2c: payload in [0,100] unchanged
               clamped_payload = msg.payload;
             }
             let output_msg = SNG_Data_Model::Message {
@@ -105,7 +105,7 @@ verus! {
   #[verifier::external_body]
   pub fn log_message_filtered(input: SNG_Data_Model::Message, output: SNG_Data_Model::Message)
   {
-    log::info!("Filter: Secret message filtered (payload: {0} -> {1})",
+    log::info!("Filter: Restricted message filtered (payload: {0} -> {1})",
       input.payload, output.payload);
   }
 

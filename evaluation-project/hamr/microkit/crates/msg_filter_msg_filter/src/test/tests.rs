@@ -5,12 +5,12 @@
 //
 //  The Filter implements payload sanitization:
 //    Req_P:    Public messages pass through unchanged
-//    Req_S_2a: Secret payload > 100 is clamped to 100
-//    Req_S_2b: Secret payload < 0 is clamped to 0
-//    Req_S_2c: Secret payload in [0,100] passes unchanged
+//    Req_R_2a: Restricted payload > 100 is clamped to 100
+//    Req_R_2b: Restricted payload < 0 is clamped to 0
+//    Req_R_2c: Restricted payload in [0,100] passes unchanged
 //
 //  Integration assumption (from upstream Gate):
-//    TopSecret messages never arrive at the Filter
+//    Critical messages never arrive at the Filter
 //
 //  Three styles of testing are illustrated:
 //    1. Manual unit tests - directly verify inputs/outputs
@@ -76,7 +76,7 @@ mod tests {
   #[test]
   #[serial]
   fn test_Req_P_public_negative_payload() {
-    // Public messages are NOT clamped -- only Secret messages are
+    // Public messages are NOT clamped -- only Restricted messages are
     let msg = SNG_Data_Model::Message {
       security_level: SNG_Data_Model::SecurityLevel::Public,
       payload: -500,
@@ -88,7 +88,7 @@ mod tests {
   #[test]
   #[serial]
   fn test_Req_P_public_large_payload() {
-    // Public messages are NOT clamped -- only Secret messages are
+    // Public messages are NOT clamped -- only Restricted messages are
     let msg = SNG_Data_Model::Message {
       security_level: SNG_Data_Model::SecurityLevel::Public,
       payload: 99999,
@@ -120,171 +120,171 @@ mod tests {
   }
 
   //========================================================================
-  //  Req_S_2a: Secret payload > 100 clamped to 100
+  //  Req_R_2a: Restricted payload > 100 clamped to 100
   //========================================================================
 
   #[test]
   #[serial]
-  fn test_Req_S2a_secret_payload_above_100() {
+  fn test_Req_R2a_restricted_payload_above_100() {
     let msg = SNG_Data_Model::Message {
-      security_level: SNG_Data_Model::SecurityLevel::Secret,
+      security_level: SNG_Data_Model::SecurityLevel::Restricted,
       payload: 150,
     };
     let output = run_filter(Some(msg));
     let expected = SNG_Data_Model::Message {
-      security_level: SNG_Data_Model::SecurityLevel::Secret,
+      security_level: SNG_Data_Model::SecurityLevel::Restricted,
       payload: 100,
     };
     assert!(output == Some(expected),
-      "Secret message with payload 150 should be clamped to 100");
+      "Restricted message with payload 150 should be clamped to 100");
   }
 
   #[test]
   #[serial]
-  fn test_Req_S2a_secret_payload_101_boundary() {
+  fn test_Req_R2a_restricted_payload_101_boundary() {
     let msg = SNG_Data_Model::Message {
-      security_level: SNG_Data_Model::SecurityLevel::Secret,
+      security_level: SNG_Data_Model::SecurityLevel::Restricted,
       payload: 101,
     };
     let output = run_filter(Some(msg));
     let expected = SNG_Data_Model::Message {
-      security_level: SNG_Data_Model::SecurityLevel::Secret,
+      security_level: SNG_Data_Model::SecurityLevel::Restricted,
       payload: 100,
     };
     assert!(output == Some(expected),
-      "Secret message with payload 101 (just above boundary) should be clamped to 100");
+      "Restricted message with payload 101 (just above boundary) should be clamped to 100");
   }
 
   #[test]
   #[serial]
-  fn test_Req_S2a_secret_payload_max_i32() {
+  fn test_Req_R2a_restricted_payload_max_i32() {
     let msg = SNG_Data_Model::Message {
-      security_level: SNG_Data_Model::SecurityLevel::Secret,
+      security_level: SNG_Data_Model::SecurityLevel::Restricted,
       payload: i32::MAX,
     };
     let output = run_filter(Some(msg));
     let expected = SNG_Data_Model::Message {
-      security_level: SNG_Data_Model::SecurityLevel::Secret,
+      security_level: SNG_Data_Model::SecurityLevel::Restricted,
       payload: 100,
     };
     assert!(output == Some(expected),
-      "Secret message with i32::MAX payload should be clamped to 100");
+      "Restricted message with i32::MAX payload should be clamped to 100");
   }
 
   //========================================================================
-  //  Req_S_2b: Secret payload < 0 clamped to 0
+  //  Req_R_2b: Restricted payload < 0 clamped to 0
   //========================================================================
 
   #[test]
   #[serial]
-  fn test_Req_S2b_secret_payload_below_0() {
+  fn test_Req_R2b_restricted_payload_below_0() {
     let msg = SNG_Data_Model::Message {
-      security_level: SNG_Data_Model::SecurityLevel::Secret,
+      security_level: SNG_Data_Model::SecurityLevel::Restricted,
       payload: -10,
     };
     let output = run_filter(Some(msg));
     let expected = SNG_Data_Model::Message {
-      security_level: SNG_Data_Model::SecurityLevel::Secret,
+      security_level: SNG_Data_Model::SecurityLevel::Restricted,
       payload: 0,
     };
     assert!(output == Some(expected),
-      "Secret message with payload -10 should be clamped to 0");
+      "Restricted message with payload -10 should be clamped to 0");
   }
 
   #[test]
   #[serial]
-  fn test_Req_S2b_secret_payload_minus_1_boundary() {
+  fn test_Req_R2b_restricted_payload_minus_1_boundary() {
     let msg = SNG_Data_Model::Message {
-      security_level: SNG_Data_Model::SecurityLevel::Secret,
+      security_level: SNG_Data_Model::SecurityLevel::Restricted,
       payload: -1,
     };
     let output = run_filter(Some(msg));
     let expected = SNG_Data_Model::Message {
-      security_level: SNG_Data_Model::SecurityLevel::Secret,
+      security_level: SNG_Data_Model::SecurityLevel::Restricted,
       payload: 0,
     };
     assert!(output == Some(expected),
-      "Secret message with payload -1 (just below boundary) should be clamped to 0");
+      "Restricted message with payload -1 (just below boundary) should be clamped to 0");
   }
 
   #[test]
   #[serial]
-  fn test_Req_S2b_secret_payload_min_i32() {
+  fn test_Req_R2b_restricted_payload_min_i32() {
     let msg = SNG_Data_Model::Message {
-      security_level: SNG_Data_Model::SecurityLevel::Secret,
+      security_level: SNG_Data_Model::SecurityLevel::Restricted,
       payload: i32::MIN,
     };
     let output = run_filter(Some(msg));
     let expected = SNG_Data_Model::Message {
-      security_level: SNG_Data_Model::SecurityLevel::Secret,
+      security_level: SNG_Data_Model::SecurityLevel::Restricted,
       payload: 0,
     };
     assert!(output == Some(expected),
-      "Secret message with i32::MIN payload should be clamped to 0");
+      "Restricted message with i32::MIN payload should be clamped to 0");
   }
 
   //========================================================================
-  //  Req_S_2c: Secret payload in [0,100] passes unchanged
+  //  Req_R_2c: Restricted payload in [0,100] passes unchanged
   //========================================================================
 
   #[test]
   #[serial]
-  fn test_Req_S2c_secret_payload_in_range() {
+  fn test_Req_R2c_restricted_payload_in_range() {
     let msg = SNG_Data_Model::Message {
-      security_level: SNG_Data_Model::SecurityLevel::Secret,
+      security_level: SNG_Data_Model::SecurityLevel::Restricted,
       payload: 50,
     };
     let output = run_filter(Some(msg));
     assert!(output == Some(msg),
-      "Secret message with payload 50 (in range) should pass unchanged");
+      "Restricted message with payload 50 (in range) should pass unchanged");
   }
 
   #[test]
   #[serial]
-  fn test_Req_S2c_secret_payload_lower_boundary_0() {
+  fn test_Req_R2c_restricted_payload_lower_boundary_0() {
     let msg = SNG_Data_Model::Message {
-      security_level: SNG_Data_Model::SecurityLevel::Secret,
+      security_level: SNG_Data_Model::SecurityLevel::Restricted,
       payload: 0,
     };
     let output = run_filter(Some(msg));
     assert!(output == Some(msg),
-      "Secret message with payload 0 (lower boundary) should pass unchanged");
+      "Restricted message with payload 0 (lower boundary) should pass unchanged");
   }
 
   #[test]
   #[serial]
-  fn test_Req_S2c_secret_payload_upper_boundary_100() {
+  fn test_Req_R2c_restricted_payload_upper_boundary_100() {
     let msg = SNG_Data_Model::Message {
-      security_level: SNG_Data_Model::SecurityLevel::Secret,
+      security_level: SNG_Data_Model::SecurityLevel::Restricted,
       payload: 100,
     };
     let output = run_filter(Some(msg));
     assert!(output == Some(msg),
-      "Secret message with payload 100 (upper boundary) should pass unchanged");
+      "Restricted message with payload 100 (upper boundary) should pass unchanged");
   }
 
   #[test]
   #[serial]
-  fn test_Req_S2c_secret_payload_1() {
+  fn test_Req_R2c_restricted_payload_1() {
     let msg = SNG_Data_Model::Message {
-      security_level: SNG_Data_Model::SecurityLevel::Secret,
+      security_level: SNG_Data_Model::SecurityLevel::Restricted,
       payload: 1,
     };
     let output = run_filter(Some(msg));
     assert!(output == Some(msg),
-      "Secret message with payload 1 (just above lower boundary) should pass unchanged");
+      "Restricted message with payload 1 (just above lower boundary) should pass unchanged");
   }
 
   #[test]
   #[serial]
-  fn test_Req_S2c_secret_payload_99() {
+  fn test_Req_R2c_restricted_payload_99() {
     let msg = SNG_Data_Model::Message {
-      security_level: SNG_Data_Model::SecurityLevel::Secret,
+      security_level: SNG_Data_Model::SecurityLevel::Restricted,
       payload: 99,
     };
     let output = run_filter(Some(msg));
     assert!(output == Some(msg),
-      "Secret message with payload 99 (just below upper boundary) should pass unchanged");
+      "Restricted message with payload 99 (just below upper boundary) should pass unchanged");
   }
 
   //========================================================================
@@ -316,14 +316,14 @@ mod tests {
 
   #[test]
   #[serial]
-  fn test_security_level_preserved_secret() {
+  fn test_security_level_preserved_restricted() {
     let msg = SNG_Data_Model::Message {
-      security_level: SNG_Data_Model::SecurityLevel::Secret,
+      security_level: SNG_Data_Model::SecurityLevel::Restricted,
       payload: 999,
     };
     let output = run_filter(Some(msg)).unwrap();
-    assert!(output.security_level == SNG_Data_Model::SecurityLevel::Secret,
-      "Output security level should be preserved for Secret messages");
+    assert!(output.security_level == SNG_Data_Model::SecurityLevel::Restricted,
+      "Output security level should be preserved for Restricted messages");
   }
 
   //========================================================================
@@ -333,7 +333,7 @@ mod tests {
   #[test]
   #[serial]
   fn test_clamping_boundaries_comprehensive() {
-    // Test values around the clamping boundaries for Secret messages
+    // Test values around the clamping boundaries for Restricted messages
     let test_cases: &[(i32, i32)] = &[
       // (input_payload, expected_output_payload)
       (i32::MIN, 0),   // far below -> clamp to 0
@@ -349,16 +349,16 @@ mod tests {
 
     for &(input_payload, expected_payload) in test_cases {
       let msg = SNG_Data_Model::Message {
-        security_level: SNG_Data_Model::SecurityLevel::Secret,
+        security_level: SNG_Data_Model::SecurityLevel::Restricted,
         payload: input_payload,
       };
       let output = run_filter(Some(msg));
       let expected = SNG_Data_Model::Message {
-        security_level: SNG_Data_Model::SecurityLevel::Secret,
+        security_level: SNG_Data_Model::SecurityLevel::Restricted,
         payload: expected_payload,
       };
       assert!(output == Some(expected),
-        "Secret payload {}: expected output payload {}, got {:?}",
+        "Restricted payload {}: expected output payload {}, got {:?}",
         input_payload, expected_payload, output);
     }
   }
@@ -368,7 +368,7 @@ mod tests {
 //  Manual GUMBOX (contract-based) Tests
 //
 //  These use cb_apis::testComputeCB to check that the GUMBO
-//  integration precondition (No_TopSecret_Input) is respected
+//  integration precondition (No_Critical_Input) is respected
 //  and the component behavior is consistent.
 //================================================================
 
@@ -391,13 +391,13 @@ mod GUMBOX_manual_tests {
     assert!(matches!(result, cb_apis::HarnessResult::Passed));
   }
 
-  //-- Req_S_2: Secret message clamping --
+  //-- Req_R_2: Restricted message clamping --
 
   #[test]
   #[serial]
-  fn test_GUMBOX_Req_S2a_clamp_above() {
+  fn test_GUMBOX_Req_R2a_clamp_above() {
     let input = Some(SNG_Data_Model::Message {
-      security_level: SNG_Data_Model::SecurityLevel::Secret,
+      security_level: SNG_Data_Model::SecurityLevel::Restricted,
       payload: 150,
     });
     let result = cb_apis::testComputeCB(input);
@@ -406,9 +406,9 @@ mod GUMBOX_manual_tests {
 
   #[test]
   #[serial]
-  fn test_GUMBOX_Req_S2b_clamp_below() {
+  fn test_GUMBOX_Req_R2b_clamp_below() {
     let input = Some(SNG_Data_Model::Message {
-      security_level: SNG_Data_Model::SecurityLevel::Secret,
+      security_level: SNG_Data_Model::SecurityLevel::Restricted,
       payload: -10,
     });
     let result = cb_apis::testComputeCB(input);
@@ -417,9 +417,9 @@ mod GUMBOX_manual_tests {
 
   #[test]
   #[serial]
-  fn test_GUMBOX_Req_S2c_in_range() {
+  fn test_GUMBOX_Req_R2c_in_range() {
     let input = Some(SNG_Data_Model::Message {
-      security_level: SNG_Data_Model::SecurityLevel::Secret,
+      security_level: SNG_Data_Model::SecurityLevel::Restricted,
       payload: 50,
     });
     let result = cb_apis::testComputeCB(input);
@@ -435,20 +435,20 @@ mod GUMBOX_manual_tests {
     assert!(matches!(result, cb_apis::HarnessResult::Passed));
   }
 
-  //-- TopSecret input should be rejected by precondition --
-  //   (The GUMBO integration assume No_TopSecret_Input
-  //    means TopSecret inputs violate the precondition)
+  //-- Critical input should be rejected by precondition --
+  //   (The GUMBO integration assume No_Critical_Input
+  //    means Critical inputs violate the precondition)
 
   #[test]
   #[serial]
-  fn test_GUMBOX_top_secret_rejected_precondition() {
+  fn test_GUMBOX_critical_rejected_precondition() {
     let input = Some(SNG_Data_Model::Message {
-      security_level: SNG_Data_Model::SecurityLevel::TopSecret,
+      security_level: SNG_Data_Model::SecurityLevel::Critical,
       payload: 42,
     });
     let result = cb_apis::testComputeCB(input);
     assert!(matches!(result, cb_apis::HarnessResult::RejectedPrecondition),
-      "TopSecret input should be rejected by the GUMBO precondition (No_TopSecret_Input)");
+      "Critical input should be rejected by the GUMBO precondition (No_Critical_Input)");
   }
 
   //-- Boundary payloads with valid security levels --
@@ -459,7 +459,7 @@ mod GUMBOX_manual_tests {
     let payloads = [i32::MIN, -1, 0, 1, 50, 99, 100, 101, i32::MAX];
     let levels = [
       SNG_Data_Model::SecurityLevel::Public,
-      SNG_Data_Model::SecurityLevel::Secret,
+      SNG_Data_Model::SecurityLevel::Restricted,
     ];
     for level in levels {
       for payload in payloads {
@@ -481,8 +481,8 @@ mod GUMBOX_manual_tests {
 //  Uses PropTest to automatically generate random inputs and
 //  verify GUMBO contracts hold for all generated test cases.
 //
-//  The Filter has a GUMBO precondition (No_TopSecret_Input)
-//  so TopSecret inputs are automatically rejected by the harness.
+//  The Filter has a GUMBO precondition (No_Critical_Input)
+//  so Critical inputs are automatically rejected by the harness.
 //  Custom strategies are used to avoid excessive rejections.
 //================================================================
 
@@ -508,8 +508,8 @@ mod GUMBOX_tests {
     }
   }
 
-  // Default strategy: generates all security levels including TopSecret
-  // (TopSecret inputs are rejected by the GUMBO precondition)
+  // Default strategy: generates all security levels including Critical
+  // (Critical inputs are rejected by the GUMBO precondition)
   testComputeCB_macro! {
     prop_testComputeCB_macro,
     config: ProptestConfig {
@@ -521,7 +521,7 @@ mod GUMBOX_tests {
     api_input: generators::option_strategy_default(generators::SNG_Data_Model_Message_strategy_default())
   }
 
-  // Custom strategy: only non-TopSecret messages to avoid rejections
+  // Custom strategy: only non-Critical messages to avoid rejections
   testComputeCB_macro! {
     prop_testComputeCB_no_rejections,
     config: ProptestConfig {
@@ -535,17 +535,17 @@ mod GUMBOX_tests {
         any::<i32>(),
         generators::SNG_Data_Model_SecurityLevel_strategy_cust(
           1,  // Public
-          1,  // Secret
-          0   // TopSecret excluded
+          1,  // Restricted
+          0   // Critical excluded
         )
       )
     )
   }
 
-  // Custom strategy: Secret messages only, with payload focused on
+  // Custom strategy: Restricted messages only, with payload focused on
   // the clamping boundaries [-5, 105] to stress-test boundary behavior
   testComputeCB_macro! {
-    prop_testComputeCB_secret_boundary,
+    prop_testComputeCB_restricted_boundary,
     config: ProptestConfig {
       cases: 200,
       max_global_rejects: 0,
@@ -556,13 +556,13 @@ mod GUMBOX_tests {
       (-5i32..=105i32),
       generators::SNG_Data_Model_SecurityLevel_strategy_cust(
         0,  // no Public
-        1,  // Secret only
-        0   // no TopSecret
+        1,  // Restricted only
+        0   // no Critical
       )
     ).prop_map(Some)
   }
 
-  // Custom strategy: always Some input, only valid (non-TopSecret) messages
+  // Custom strategy: always Some input, only valid (non-Critical) messages
   testComputeCB_macro! {
     prop_testComputeCB_always_some_valid,
     config: ProptestConfig {
@@ -575,8 +575,8 @@ mod GUMBOX_tests {
       any::<i32>(),
       generators::SNG_Data_Model_SecurityLevel_strategy_cust(
         1,  // Public
-        1,  // Secret
-        0   // no TopSecret
+        1,  // Restricted
+        0   // no Critical
       )
     ).prop_map(Some)
   }

@@ -43,8 +43,8 @@ verus! {
       &mut self,
       value: SNG_Data_Model::Message)
       requires
-        // guarantee No_TopSecret_Output
-        value.security_level != SNG_Data_Model::SecurityLevel::TopSecret,
+        // guarantee No_Critical_Output
+        value.security_level != SNG_Data_Model::SecurityLevel::Critical,
       ensures
         old(self).input == self.input,
         self.output == Some(value),

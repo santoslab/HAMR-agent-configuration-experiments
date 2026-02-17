@@ -37,18 +37,18 @@ verus! {
         // PLACEHOLDER MARKER TIME TRIGGERED ENSURES
     {
       // Gate implements message drop/pass policies:
-      //   Req_TS: TopSecret messages are dropped
-      //   Req_S_1: Secret messages are passed through
+      //   Req_C: Critical messages are dropped
+      //   Req_R_1: Restricted messages are passed through
       //   Req_P: Public messages are passed through
 
       let input_contents = api.get_input();
       match input_contents {
         Some(msg) => {
-          if msg.security_level == SNG_Data_Model::SecurityLevel::TopSecret {
-            // Req_TS: drop TopSecret messages
+          if msg.security_level == SNG_Data_Model::SecurityLevel::Critical {
+            // Req_C: drop Critical messages
             log_message_dropped(msg);
           } else {
-            // Req_S_1, Req_P: pass Secret and Public messages through
+            // Req_R_1, Req_P: pass Restricted and Public messages through
             api.put_output(msg);
             log_message_passed(msg);
           }
