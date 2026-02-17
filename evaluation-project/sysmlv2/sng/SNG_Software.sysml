@@ -5,8 +5,8 @@
     Simple Network Guard system.
 
     Core pipeline components:
-      - Gate: drops TopSecret messages, passes others
-      - Filter: clamps Secret message payloads to [0,100],
+      - Gate: drops Critical messages, passes others
+      - Filter: clamps Restricted message payloads to [0,100],
                 passes Public messages unchanged
 
     Test harness components:
@@ -30,8 +30,8 @@ package SNG_Software {
     //  G a t e   Thread
     //
     //  Implements message drop/pass policies:
-    //    - TopSecret messages are dropped (Req_TS)
-    //    - Secret and Public messages are passed through (Req_S_1, Req_P)
+    //    - Critical messages are dropped (Req_C)
+    //    - Restricted and Public messages are passed through (Req_R_1, Req_P)
     //
     //===============================================================================
     part def Gate :> Periodic_Rust_Thread {
@@ -41,14 +41,14 @@ package SNG_Software {
 
         //-- Behavior Constraints --
         //  GUMBO integration constraint: messages that pass through
-        //  the Gate are never TopSecret.
+        //  the Gate are never Critical.
         language "GUMBO" /*{
             integration
-                guarantee No_TopSecret_Output:
-                    output.security_level != SNG_Data_Model::SecurityLevel.TopSecret;
+                guarantee No_Critical_Output:
+                    output.security_level != SNG_Data_Model::SecurityLevel.Critical;
         }*/
 
-        //  Compute contracts for Gate (Req_TS, Req_S_1, Req_P) will be
+        //  Compute contracts for Gate (Req_C, Req_R_1, Req_P) will be
         //  added once GUMBO semantics for EventDataPort option types
         //  (message present vs. absent) are clarified.
     }
@@ -59,7 +59,7 @@ package SNG_Software {
     //
     //  Implements payload sanitization:
     //    - Public messages pass unchanged (Req_P)
-    //    - Secret message payloads are clamped to [0,100] (Req_S_2)
+    //    - Restricted message payloads are clamped to [0,100] (Req_R_2)
     //
     //===============================================================================
     part def Filter :> Periodic_Rust_Thread {
@@ -69,14 +69,14 @@ package SNG_Software {
 
         //-- Behavior Constraints --
         //  GUMBO integration constraint: the Filter only receives
-        //  non-TopSecret messages (guaranteed by Gate upstream).
+        //  non-Critical messages (guaranteed by Gate upstream).
         language "GUMBO" /*{
             integration
-                assume No_TopSecret_Input:
-                    input.security_level != SNG_Data_Model::SecurityLevel.TopSecret;
+                assume No_Critical_Input:
+                    input.security_level != SNG_Data_Model::SecurityLevel.Critical;
         }*/
 
-        //  Compute contracts for Filter (Req_S_2, Req_P) will be
+        //  Compute contracts for Filter (Req_R_2, Req_P) will be
         //  added once GUMBO semantics for EventDataPort option types
         //  (message present vs. absent) are clarified.
     }

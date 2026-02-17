@@ -11,8 +11,8 @@ package SNG_Data_Model {
     // Security classification for messages
     enum def SecurityLevel {
         enum Public;
-        enum Secret;
-        enum TopSecret;
+        enum Restricted;
+        enum Critical;
     }
 
     // Message structure processed by the guard
