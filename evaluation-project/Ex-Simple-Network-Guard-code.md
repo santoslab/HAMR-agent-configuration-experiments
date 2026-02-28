@@ -342,6 +342,11 @@ Mark this function with `#[verifier::external_body]` as discussed in the Simple 
 
 You do not need to write any tests for this component
 
+## Activity 9 - Commit / Push the Results of Your Work Above
+
+* **Task:** Commit and push to git the changes to your project that have been made from your completion of the activities above
+
+
 
 
 
