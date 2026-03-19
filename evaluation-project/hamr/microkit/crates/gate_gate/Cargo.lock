@@ -3,6 +3,16 @@
 version = 4
 
 [[package]]
+name = "GumboLib"
+version = "0.1.0"
+dependencies = [
+ "data",
+ "verus_builtin",
+ "verus_builtin_macros",
+ "vstd",
+]
+
+[[package]]
 name = "aho-corasick"
 version = "1.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -301,6 +311,7 @@ dependencies = [
 name = "gate_gate"
 version = "0.1.0"
 dependencies = [
+ "GumboLib",
  "data",
  "env_logger",
  "lazy_static",
