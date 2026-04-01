@@ -1,11 +1,13 @@
 # This file will not be overwritten if codegen is rerun
 
 [package]
-name = "data"
+name = "GumboLib"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+data = { path="../data" }
+
 # -----------------------------------------------------------------------------
 # Verus crate dependencies
 #
