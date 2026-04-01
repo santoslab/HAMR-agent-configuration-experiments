@@ -16,6 +16,7 @@ Documentation is in the folder @doc.  The primary contents are as follows:
 - Modeling Tips - @doc/modeling-tips.md contains practical tips and known issues for SysMLv2 modeling with HAMR, including keyword conflicts, architecture constraints, GUMBO gotchas, and common patterns.
 - Component Implementation Guide - @doc/component-implementation-guide.md explains how to implement Rust application logic for HAMR thread components, including Verus blocks, port API usage, logging, and complete examples.
 - Testing Guide - @doc/testing-guide.md describes how to test HAMR components using the generated test infrastructure, covering manual unit tests, GUMBOX contract-based tests, and automated PropTest property-based tests.
+- Build and Verification Commands - @doc/build-and-verification-commands.md documents the Makefile targets for building, testing, and running Verus verification on component crates.
 
 ## Examples
 

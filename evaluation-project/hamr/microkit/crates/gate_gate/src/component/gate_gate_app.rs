@@ -44,13 +44,16 @@ verus! {
       let input_contents = api.get_input();
       match input_contents {
         Some(msg) => {
-          if msg.security_level == SNG_Data_Model::SecurityLevel::Critical {
-            // Req_C: drop Critical messages
-            log_message_dropped(msg);
-          } else {
-            // Req_R_1, Req_P: pass Restricted and Public messages through
-            api.put_output(msg);
-            log_message_passed(msg);
+          match msg.security_level {
+            SNG_Data_Model::SecurityLevel::Critical => {
+              // Req_C: drop Critical messages
+              log_message_dropped(msg);
+            }
+            _ => {
+              // Req_R_1, Req_P: pass Restricted and Public messages through
+              api.put_output(msg);
+              log_message_passed(msg);
+            }
           }
         }
         None => {

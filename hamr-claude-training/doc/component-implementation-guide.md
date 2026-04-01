@@ -186,6 +186,34 @@ pub fn complex_helper(data: &[i32]) -> i32 {
 
 Use this sparingly. Prefer keeping functions verifiable when possible.
 
+## Enum Comparison in Verus: Use Pattern Matching
+
+Inside `verus!` blocks, **do not use `==` to compare enum values** from the `data` crate. The `PartialEq` trait is derived on enums in the `data` crate, which is outside `verus!` blocks. Verus treats such externally-defined functions as opaque and will reject their use in verified code with an error like:
+
+```
+error: cannot use function `data::..::impl&%11::eq` which is ignored because it is
+       either declared outside the verus! macro or it is marked as `external`.
+```
+
+Instead, use `match` to dispatch on enum variants. Verus can reason about pattern matching natively without needing external function specifications.
+
+```rust
+// WRONG: Verus cannot verify the externally-defined == operator
+if msg.security_level == SNG_Data_Model::SecurityLevel::TopSecret {
+    // ...
+}
+
+// CORRECT: Verus handles pattern matching natively
+match msg.security_level {
+    SNG_Data_Model::SecurityLevel::TopSecret => {
+        // ...
+    }
+    _ => {
+        // ...
+    }
+}
+```
+
 ## Complete Example: Gate Component
 
 This component drops TopSecret messages and passes others through:
@@ -219,11 +247,14 @@ verus! {
             let input_contents = api.get_input();
             match input_contents {
                 Some(msg) => {
-                    if msg.security_level == SNG_Data_Model::SecurityLevel::TopSecret {
-                        log_message_dropped(msg);
-                    } else {
-                        api.put_output(msg);
-                        log_message_passed(msg);
+                    match msg.security_level {
+                        SNG_Data_Model::SecurityLevel::TopSecret => {
+                            log_message_dropped(msg);
+                        }
+                        _ => {
+                            api.put_output(msg);
+                            log_message_passed(msg);
+                        }
                     }
                 }
                 None => { }
@@ -293,10 +324,12 @@ verus! {
             let input_contents = api.get_input();
             match input_contents {
                 Some(msg) => {
-                    if msg.security_level == SNG_Data_Model::SecurityLevel::Public {
+                    match msg.security_level {
+                      SNG_Data_Model::SecurityLevel::Public => {
                         api.put_output(msg);
                         log_message_passed(msg);
-                    } else {
+                      }
+                      _ => {
                         // Secret messages: clamp payload to [0, 100]
                         let clamped_payload: i32;
                         if msg.payload > 100 {
@@ -312,6 +345,7 @@ verus! {
                         };
                         api.put_output(output_msg);
                         log_message_filtered(msg, output_msg);
+                      }
                     }
                 }
                 None => { }

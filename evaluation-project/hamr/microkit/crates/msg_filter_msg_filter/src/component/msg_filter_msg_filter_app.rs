@@ -45,29 +45,32 @@ verus! {
       let input_contents = api.get_input();
       match input_contents {
         Some(msg) => {
-          if msg.security_level == SNG_Data_Model::SecurityLevel::Public {
-            // Req_P: pass Public messages unchanged
-            api.put_output(msg);
-            log_message_passed(msg);
-          } else {
-            // Restricted messages: clamp payload to [0, 100]
-            let clamped_payload: i32;
-            if msg.payload > 100 {
-              // Req_R_2a: payload > 100 clamped to 100
-              clamped_payload = 100;
-            } else if msg.payload < 0 {
-              // Req_R_2b: payload < 0 clamped to 0
-              clamped_payload = 0;
-            } else {
-              // Req_R_2c: payload in [0,100] unchanged
-              clamped_payload = msg.payload;
+          match msg.security_level {
+            SNG_Data_Model::SecurityLevel::Public => {
+              // Req_P: pass Public messages unchanged
+              api.put_output(msg);
+              log_message_passed(msg);
             }
-            let output_msg = SNG_Data_Model::Message {
-              security_level: msg.security_level,
-              payload: clamped_payload,
-            };
-            api.put_output(output_msg);
-            log_message_filtered(msg, output_msg);
+            _ => {
+              // Restricted messages: clamp payload to [0, 100]
+              let clamped_payload: i32;
+              if msg.payload > 100 {
+                // Req_R_2a: payload > 100 clamped to 100
+                clamped_payload = 100;
+              } else if msg.payload < 0 {
+                // Req_R_2b: payload < 0 clamped to 0
+                clamped_payload = 0;
+              } else {
+                // Req_R_2c: payload in [0,100] unchanged
+                clamped_payload = msg.payload;
+              }
+              let output_msg = SNG_Data_Model::Message {
+                security_level: msg.security_level,
+                payload: clamped_payload,
+              };
+              api.put_output(output_msg);
+              log_message_filtered(msg, output_msg);
+            }
           }
         }
         None => {
