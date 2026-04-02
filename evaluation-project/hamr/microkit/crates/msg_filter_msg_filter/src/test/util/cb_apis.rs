@@ -70,6 +70,14 @@ pub fn testComputeCB(api_input: Option<SNG_Data_Model::Message>) -> HarnessResul
   // [InvokeEntryPoint]: Invoke the entry point
   crate::msg_filter_msg_filter_timeTriggered();
 
+  // [RetrieveOutState]: retrieve values of the output ports via get operations and GUMBO declared local state variable
+  let api_output = get_output();
+
+  // [CheckPost]: invoke the oracle function
+  if !GUMBOX::compute_CEP_Post(api_input, api_output) {
+    return HarnessResult::FailedPostcondition(TestCaseError::Fail("Postcondition failed: incorrect output behavior".into()));
+  }
+
   return HarnessResult::Passed
 }
 

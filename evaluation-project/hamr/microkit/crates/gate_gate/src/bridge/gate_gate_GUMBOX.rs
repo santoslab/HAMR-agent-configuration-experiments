@@ -20,7 +20,7 @@ macro_rules! impliesL {
   */
 pub fn I_Guar_output(output: SNG_Data_Model::Message) -> bool
 {
-  output.security_level != SNG_Data_Model::SecurityLevel::Critical
+  GumboLib::allowedSecurityLevel(output)
 }
 
 /** I-Guar: Integration constraint on gate's outgoing event data port output
@@ -45,6 +45,86 @@ pub fn initialize_IEP_Post(api_output: Option<SNG_Data_Model::Message>) -> bool
   I_Guar_Guard_output(api_output)
 }
 
+/** Compute Entrypoint Contract
+  *
+  * guarantee Req_C_Drop_Critical
+  * @param api_input incoming event data port
+  * @param api_output outgoing event data port
+  */
+pub fn compute_spec_Req_C_Drop_Critical_guarantee(
+  api_input: Option<SNG_Data_Model::Message>,
+  api_output: Option<SNG_Data_Model::Message>) -> bool
+{
+  implies!(
+    api_input.is_some() &&
+      (api_input.unwrap().security_level == SNG_Data_Model::SecurityLevel::Critical),
+    api_output.is_none())
+}
+
+/** Compute Entrypoint Contract
+  *
+  * guarantee Req_R1_Pass_Restricted
+  * @param api_input incoming event data port
+  * @param api_output outgoing event data port
+  */
+pub fn compute_spec_Req_R1_Pass_Restricted_guarantee(
+  api_input: Option<SNG_Data_Model::Message>,
+  api_output: Option<SNG_Data_Model::Message>) -> bool
+{
+  implies!(
+    api_input.is_some() &&
+      (api_input.unwrap().security_level == SNG_Data_Model::SecurityLevel::Restricted),
+    api_output.is_some() && GumboLib::equalMessage(api_input.unwrap(), api_output.unwrap()))
+}
+
+/** Compute Entrypoint Contract
+  *
+  * guarantee Req_P_Pass_Public
+  * @param api_input incoming event data port
+  * @param api_output outgoing event data port
+  */
+pub fn compute_spec_Req_P_Pass_Public_guarantee(
+  api_input: Option<SNG_Data_Model::Message>,
+  api_output: Option<SNG_Data_Model::Message>) -> bool
+{
+  implies!(
+    api_input.is_some() &&
+      (api_input.unwrap().security_level == SNG_Data_Model::SecurityLevel::Public),
+    api_output.is_some() && GumboLib::equalMessage(api_input.unwrap(), api_output.unwrap()))
+}
+
+/** Compute Entrypoint Contract
+  *
+  * guarantee No_Input_No_Output
+  * @param api_input incoming event data port
+  * @param api_output outgoing event data port
+  */
+pub fn compute_spec_No_Input_No_Output_guarantee(
+  api_input: Option<SNG_Data_Model::Message>,
+  api_output: Option<SNG_Data_Model::Message>) -> bool
+{
+  implies!(
+    !(api_input.is_some()),
+    api_output.is_none())
+}
+
+/** CEP-T-Guar: Top-level guarantee contracts for gate's compute entrypoint
+  *
+  * @param api_input incoming event data port
+  * @param api_output outgoing event data port
+  */
+pub fn compute_CEP_T_Guar(
+  api_input: Option<SNG_Data_Model::Message>,
+  api_output: Option<SNG_Data_Model::Message>) -> bool
+{
+  let r0: bool = compute_spec_Req_C_Drop_Critical_guarantee(api_input, api_output);
+  let r1: bool = compute_spec_Req_R1_Pass_Restricted_guarantee(api_input, api_output);
+  let r2: bool = compute_spec_Req_P_Pass_Public_guarantee(api_input, api_output);
+  let r3: bool = compute_spec_No_Input_No_Output_guarantee(api_input, api_output);
+
+  return r0 && r1 && r2 && r3;
+}
+
 /** CEP-Post: Compute Entrypoint Post-Condition for gate
   *
   * @param api_input incoming event data port
@@ -57,5 +137,8 @@ pub fn compute_CEP_Post(
   // I-Guar-Guard: Integration constraints for gate's outgoing ports
   let r0: bool = I_Guar_Guard_output(api_output);
 
-  return r0;
+  // CEP-Guar: guarantee clauses of gate's compute entrypoint
+  let r1: bool = compute_CEP_T_Guar(api_input, api_output);
+
+  return r0 && r1;
 }

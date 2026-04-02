@@ -20,7 +20,7 @@ macro_rules! impliesL {
   */
 pub fn I_Assm_input(input: SNG_Data_Model::Message) -> bool
 {
-  input.security_level != SNG_Data_Model::SecurityLevel::Critical
+  GumboLib::allowedSecurityLevel(input)
 }
 
 /** I-Assm: Integration constraint on msg_filter's incoming event data port input
@@ -43,6 +43,83 @@ pub fn compute_CEP_Pre(api_input: Option<SNG_Data_Model::Message>) -> bool
 {
   // I-Assm-Guard: Integration constraints for msg_filter's incoming ports
   let r0: bool = I_Assm_Guard_input(api_input);
+
+  return r0;
+}
+
+/** guarantee Req_P_Public_Pass
+  * @param api_input incoming event data port
+  * @param api_output outgoing event data port
+  */
+pub fn compute_case_Req_P_Public_Pass(
+  api_input: Option<SNG_Data_Model::Message>,
+  api_output: Option<SNG_Data_Model::Message>) -> bool
+{
+  implies!(
+    api_input.is_some() &&
+      (api_input.unwrap().security_level == SNG_Data_Model::SecurityLevel::Public),
+    api_output.is_some() && GumboLib::equalMessage(api_input.unwrap(), api_output.unwrap()))
+}
+
+/** guarantee Req_R2_Restricted_Clamp
+  * @param api_input incoming event data port
+  * @param api_output outgoing event data port
+  */
+pub fn compute_case_Req_R2_Restricted_Clamp(
+  api_input: Option<SNG_Data_Model::Message>,
+  api_output: Option<SNG_Data_Model::Message>) -> bool
+{
+  implies!(
+    api_input.is_some() &&
+      (api_input.unwrap().security_level == SNG_Data_Model::SecurityLevel::Restricted),
+    api_output.is_some() &&
+      (GumboLib::equalSecurityLevel(api_input.unwrap(), api_output.unwrap()) &&
+        (GumboLib::clampedPayload(api_output.unwrap()) &&
+          (implies!(
+            GumboLib::clampedPayload(api_input.unwrap()),
+            GumboLib::equalPayload(api_input.unwrap(), api_output.unwrap()))))))
+}
+
+/** guarantee No_Input
+  * @param api_input incoming event data port
+  * @param api_output outgoing event data port
+  */
+pub fn compute_case_No_Input(
+  api_input: Option<SNG_Data_Model::Message>,
+  api_output: Option<SNG_Data_Model::Message>) -> bool
+{
+  implies!(
+    !(api_input.is_some()),
+    api_output.is_none())
+}
+
+/** CEP-T-Case: Top-Level case contracts for msg_filter's compute entrypoint
+  *
+  * @param api_input incoming event data port
+  * @param api_output outgoing event data port
+  */
+pub fn compute_CEP_T_Case(
+  api_input: Option<SNG_Data_Model::Message>,
+  api_output: Option<SNG_Data_Model::Message>) -> bool
+{
+  let r0: bool = compute_case_Req_P_Public_Pass(api_input, api_output);
+  let r1: bool = compute_case_Req_R2_Restricted_Clamp(api_input, api_output);
+  let r2: bool = compute_case_No_Input(api_input, api_output);
+
+  return r0 && r1 && r2;
+}
+
+/** CEP-Post: Compute Entrypoint Post-Condition for msg_filter
+  *
+  * @param api_input incoming event data port
+  * @param api_output outgoing event data port
+  */
+pub fn compute_CEP_Post(
+  api_input: Option<SNG_Data_Model::Message>,
+  api_output: Option<SNG_Data_Model::Message>) -> bool
+{
+  // CEP-T-Case: case clauses of msg_filter's compute entrypoint
+  let r0: bool = compute_CEP_T_Case(api_input, api_output);
 
   return r0;
 }

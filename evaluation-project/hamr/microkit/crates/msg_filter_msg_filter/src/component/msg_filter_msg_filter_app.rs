@@ -32,9 +32,28 @@ verus! {
       &mut self,
       api: &mut msg_filter_msg_filter_Application_Api<API>)
       requires
-        // PLACEHOLDER MARKER TIME TRIGGERED REQUIRES
+        // BEGIN MARKER TIME TRIGGERED REQUIRES
+        // assume AADL_Requirement
+        //   All outgoing event ports must be empty
+        old(api).output.is_none(),
+        // END MARKER TIME TRIGGERED REQUIRES
       ensures
-        // PLACEHOLDER MARKER TIME TRIGGERED ENSURES
+        // BEGIN MARKER TIME TRIGGERED ENSURES
+        // case Req_P_Public_Pass
+        (old(api).input.is_some() &&
+          (old(api).input.unwrap().security_level == SNG_Data_Model::SecurityLevel::Public)) ==>
+          (api.output.is_some() && GumboLib::equalMessage_spec(api.input.unwrap(), api.output.unwrap())),
+        // case Req_R2_Restricted_Clamp
+        (old(api).input.is_some() &&
+          (old(api).input.unwrap().security_level == SNG_Data_Model::SecurityLevel::Restricted)) ==>
+          (api.output.is_some() &&
+             (GumboLib::equalSecurityLevel_spec(api.input.unwrap(), api.output.unwrap()) &&
+               (GumboLib::clampedPayload_spec(api.output.unwrap()) &&
+                 (GumboLib::clampedPayload_spec(api.input.unwrap()) ==> GumboLib::equalPayload_spec(api.input.unwrap(), api.output.unwrap()))))),
+        // case No_Input
+        (!(old(api).input.is_some())) ==>
+          (api.output.is_none()),
+        // END MARKER TIME TRIGGERED ENSURES
     {
       // Filter implements payload sanitization:
       //   Req_P: Public messages pass unchanged

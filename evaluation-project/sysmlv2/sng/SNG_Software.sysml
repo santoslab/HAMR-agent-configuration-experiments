@@ -17,6 +17,7 @@
 package SNG_Software {
     private import HAMR::*;
     private import SNG_Data_Model::*;
+    private import GumboLib::*;
 
     //=== Common thread style ===
     part def Periodic_Rust_Thread :> Thread {
@@ -40,17 +41,31 @@ package SNG_Software {
         port output : EventDataPort { out :>> type : Message; }
 
         //-- Behavior Constraints --
-        //  GUMBO integration constraint: messages that pass through
-        //  the Gate are never Critical.
+        //  Gate uses guarantee-only clauses with "implies" to illustrate
+        //  how implies can give the same semantics as case assume/guarantee pairs.
+        //  HasEvent/NoEvent guard port access; short-circuit "and" prevents
+        //  erroneous access of an empty port.
         language "GUMBO" /*{
             integration
                 guarantee No_Critical_Output:
-                    output.security_level != SNG_Data_Model::SecurityLevel.Critical;
-        }*/
+                    GumboLib::GUMBO__Library::allowedSecurityLevel(output);
 
-        //  Compute contracts for Gate (Req_C, Req_R_1, Req_P) will be
-        //  added once GUMBO semantics for EventDataPort option types
-        //  (message present vs. absent) are clarified.
+            compute
+                guarantee Req_C_Drop_Critical:
+                    HasEvent(input) and (input.security_level == SNG_Data_Model::SecurityLevel.Critical)
+                    implies NoSend(output);
+
+                guarantee Req_R1_Pass_Restricted:
+                    HasEvent(input) and (input.security_level == SNG_Data_Model::SecurityLevel.Restricted)
+                    implies HasEvent(output) and GumboLib::GUMBO__Library::equalMessage(input, output);
+
+                guarantee Req_P_Pass_Public:
+                    HasEvent(input) and (input.security_level == SNG_Data_Model::SecurityLevel.Public)
+                    implies HasEvent(output) and GumboLib::GUMBO__Library::equalMessage(input, output);
+
+                guarantee No_Input_No_Output:
+                    (not HasEvent(input)) implies NoSend(output);
+        }*/
     }
 
     //===============================================================================
@@ -68,17 +83,32 @@ package SNG_Software {
         port output : EventDataPort { out :>> type : Message; }
 
         //-- Behavior Constraints --
-        //  GUMBO integration constraint: the Filter only receives
-        //  non-Critical messages (guaranteed by Gate upstream).
+        //  Filter uses compute_cases with case assume/guarantee pairs
+        //  to contrast with Gate's guarantee-only style.
+        //  Integration assume uses library function to express the
+        //  pipeline invariant established by Gate upstream.
         language "GUMBO" /*{
             integration
                 assume No_Critical_Input:
-                    input.security_level != SNG_Data_Model::SecurityLevel.Critical;
-        }*/
+                    GumboLib::GUMBO__Library::allowedSecurityLevel(input);
 
-        //  Compute contracts for Filter (Req_R_2, Req_P) will be
-        //  added once GUMBO semantics for EventDataPort option types
-        //  (message present vs. absent) are clarified.
+            compute
+              compute_cases
+                case Req_P_Public_Pass:
+                    assume HasEvent(input) and (input.security_level == SNG_Data_Model::SecurityLevel.Public);
+                    guarantee HasEvent(output) and GumboLib::GUMBO__Library::equalMessage(input, output);
+
+                case Req_R2_Restricted_Clamp:
+                    assume HasEvent(input) and (input.security_level == SNG_Data_Model::SecurityLevel.Restricted);
+                    guarantee HasEvent(output)
+                        and GumboLib::GUMBO__Library::equalSecurityLevel(input, output)
+                        and GumboLib::GUMBO__Library::clampedPayload(output)
+                        and (GumboLib::GUMBO__Library::clampedPayload(input) implies GumboLib::GUMBO__Library::equalPayload(input, output));
+
+                case No_Input:
+                    assume (not HasEvent(input));
+                    guarantee NoSend(output);
+        }*/
     }
 
     //===============================================================================

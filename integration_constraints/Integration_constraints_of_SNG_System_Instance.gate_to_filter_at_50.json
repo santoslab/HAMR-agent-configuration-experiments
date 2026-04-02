@@ -1,0 +1,94 @@
+{
+  "type" : "IntegrationConstraintReporting.IntegrationConstraint",
+  "srcPort" : "SNG_Software.Gate.output",
+  "srcPortPos" : {
+    "type" : "Position",
+    "uriOpt" : {
+      "type" : "Some",
+      "value" : "file:\/\/\/Users\/hatcliff\/Dev\/git-repos\/hamr-agent-configuration-experiments-git\/evaluation-project\/sysmlv2\/sng\/SNG_Software.sysml"
+    },
+    "beginLine" : 41,
+    "beginColumn" : 8,
+    "endLine" : 41,
+    "endColumn" : 62,
+    "offset" : 1523,
+    "length" : 54
+  },
+  "srcPortIntegrationConstraint" : {
+    "type" : "Some",
+    "value" : {
+      "type" : "IntegrationConstraintReporting.GclIntegrationConstraint",
+      "id" : "No_Critical_Output",
+      "descriptor" : {
+        "type" : "None"
+      },
+      "position" : {
+        "type" : "Position",
+        "uriOpt" : {
+          "type" : "Some",
+          "value" : "file:\/\/\/Users\/hatcliff\/Dev\/git-repos\/hamr-agent-configuration-experiments-git\/evaluation-project\/sysmlv2\/sng\/SNG_Software.sysml"
+        },
+        "beginLine" : 50,
+        "beginColumn" : 16,
+        "endLine" : 51,
+        "endColumn" : 74,
+        "offset" : 1968,
+        "length" : 104
+      }
+    }
+  },
+  "dstPort" : "SNG_Software.Filter.input",
+  "dstPortPos" : {
+    "type" : "Position",
+    "uriOpt" : {
+      "type" : "Some",
+      "value" : "file:\/\/\/Users\/hatcliff\/Dev\/git-repos\/hamr-agent-configuration-experiments-git\/evaluation-project\/sysmlv2\/sng\/SNG_Software.sysml"
+    },
+    "beginLine" : 82,
+    "beginColumn" : 8,
+    "endLine" : 82,
+    "endColumn" : 60,
+    "offset" : 3405,
+    "length" : 52
+  },
+  "dstPortIntegrationConstraint" : {
+    "type" : "IntegrationConstraintReporting.GclIntegrationConstraint",
+    "id" : "No_Critical_Input",
+    "descriptor" : {
+      "type" : "None"
+    },
+    "position" : {
+      "type" : "Position",
+      "uriOpt" : {
+        "type" : "Some",
+        "value" : "file:\/\/\/Users\/hatcliff\/Dev\/git-repos\/hamr-agent-configuration-experiments-git\/evaluation-project\/sysmlv2\/sng\/SNG_Software.sysml"
+      },
+      "beginLine" : 92,
+      "beginColumn" : 16,
+      "endLine" : 93,
+      "endColumn" : 73,
+      "offset" : 3888,
+      "length" : 99
+    }
+  },
+  "connectionMidPoint" : {
+    "type" : "Position",
+    "uriOpt" : {
+      "type" : "Some",
+      "value" : "file:\/\/\/Users\/hatcliff\/Dev\/git-repos\/hamr-agent-configuration-experiments-git\/evaluation-project\/sysmlv2\/sng\/SNG.sysml"
+    },
+    "beginLine" : 50,
+    "beginColumn" : 8,
+    "endLine" : 51,
+    "endColumn" : 43,
+    "offset" : 1823,
+    "length" : 94
+  },
+  "claim" : "SNG_Software.Gate.output == SNG_Software.Filter.input &&\n  GumboLib.GUMBO__Library.allowedSecurityLevel(output) ___>:\n  GumboLib.GUMBO__Library.allowedSecurityLevel(input)",
+  "smt2QueryResult" : {
+    "type" : "IntegrationConstraintReporting.Smt2QueryResult",
+    "value" : "Unsat"
+  },
+  "logikaMessage" : "",
+  "smt2Query" : ";\n; Sequent:\n;\n; \u22A2\n; SNG_Software.Gate.output == SNG_Software.Filter.input &&\n;   GumboLib.GUMBO__Library.allowedSecurityLevel(SNG_Software.Gate.output) ___>:\n;   GumboLib.GUMBO__Library.allowedSecurityLevel(SNG_Software.Filter.input)\n;\n(set-logic ALL)\n\n(define-sort B () Bool)\n(define-fun |B.unary_!| ((x B)) B (not x))\n(define-fun |B.unary_~| ((x B)) B (not x))\n(define-fun |B.==| ((x B) (y B)) B (= x y))\n(define-fun |B.!=| ((x B) (y B)) B (not (= x y)))\n(define-fun |B.&| ((x B) (y B)) B (and x y))\n(define-fun |B.\u2502| ((x B) (y B)) B (or x y))\n(define-fun |B.\u2502^| ((x B) (y B)) B (xor x y))\n(define-fun |B.__>:| ((x B) (y B)) B (=> x y))\n(define-fun |B.->:| ((x B) (y B)) B (=> x y))\n\n(declare-sort ADT 0)\n(declare-sort Type 0)\n(declare-fun type-of (ADT) Type)\n(declare-fun sub-type (Type Type) Bool)\n\n(assert (forall ((x Type)) (sub-type x x)))\n(assert (forall ((x Type) (y Type) (z Type)) (=> (and (sub-type x y) (sub-type y z)) (sub-type x z))))\n(assert (forall ((x Type) (y Type)) (=> (and (sub-type x y) (sub-type y x)) (= x y))))\n\n(define-sort Z () Int)\n(define-fun |Z.unary_-| ((x Z)) Z (- x))\n(define-fun |Z.<=| ((x Z) (y Z)) B (<= x y))\n(define-fun |Z.<| ((x Z) (y Z)) B (< x y))\n(define-fun |Z.>| ((x Z) (y Z)) B (> x y))\n(define-fun |Z.>=| ((x Z) (y Z)) B (>= x y))\n(define-fun |Z.==| ((x Z) (y Z)) B (= x y))\n(define-fun |Z.!=| ((x Z) (y Z)) B (not (= x y)))\n(define-fun |Z.+| ((x Z) (y Z)) Z (+ x y))\n(define-fun |Z.-| ((x Z) (y Z)) Z (- x y))\n(define-fun |Z.*| ((x Z) (y Z)) Z (* x y))\n(define-fun |Z.\/| ((x Z) (y Z)) Z (div x y))\n(define-fun |Z.%| ((x Z) (y Z)) Z (mod x y))\n(declare-fun |Z.randomSeed(Z)| (Z) Z)\n(declare-fun |Z.randomSeedBetween(Z, Z, Z)| (Z Z Z) Z)\n(declare-fun |B.randomSeed(Z)| (Z) B)\n\n(declare-const |T:SNG_Data_Model.Message| Type)\n\n(define-sort |SNG_Data_Model.Message| () ADT)\n\n(define-sort S32 () (_ BitVec 32))\n(define-fun |S32.toZ| ((x S32)) Z\n  (ite (= ((_ extract 31 31) x) #b0)\n       (bv2nat ((_ extract 30 0) x))\n       (- (bv2nat ((_ extract 30 0) x)) 2147483648)))\n(define-fun |S32.unary_-| ((x S32)) S32 (bvneg x))\n(define-fun |S32.unary_~| ((x S32)) S32 (bvnot x))\n(define-fun |S32.<=| ((x S32) (y S32)) B (bvsle x y))\n(define-fun |S32.<| ((x S32) (y S32)) B (bvslt x y))\n(define-fun |S32.>| ((x S32) (y S32)) B (bvsgt x y))\n(define-fun |S32.>=| ((x S32) (y S32)) B (bvsge x y))\n(define-fun |S32.==| ((x S32) (y S32)) B (= x y))\n(define-fun |S32.!=| ((x S32) (y S32)) B (not (= x y)))\n(define-fun |S32.+| ((x S32) (y S32)) S32 (bvadd x y))\n(define-fun |S32.-| ((x S32) (y S32)) S32 (bvsub x y))\n(define-fun |S32.*| ((x S32) (y S32)) S32 (bvmul x y))\n(define-fun |S32.\/| ((x S32) (y S32)) S32 (bvsdiv x y))\n(define-fun |S32.%| ((x S32) (y S32)) S32 (bvsrem x y))\n(define-fun |S32.<<| ((x S32) (y S32)) S32 (bvshl x y))\n(define-fun |S32.>>| ((x S32) (y S32)) S32 (bvashr x y))\n(define-fun |S32.>>>| ((x S32) (y S32)) S32 (bvlshr x y))\n(declare-fun |S32.randomSeed(Z)| (Z) S32)\n(declare-fun |S32.randomSeedBetween(Z, S32, S32)| (Z S32 S32) S32)\n\n\n(declare-datatypes ((|SNG_Data_Model.SecurityLevel.Type| 0)) ((\n  (|T:SNG_Data_Model.SecurityLevel.Type.Public|) (|T:SNG_Data_Model.SecurityLevel.Type.Restricted|) (|T:SNG_Data_Model.SecurityLevel.Type.Critical|))))\n(declare-fun |SecurityLevel.Type.ordinal| (|SNG_Data_Model.SecurityLevel.Type|) Z)\n(declare-fun |SecurityLevel.Type.name| (|SNG_Data_Model.SecurityLevel.Type|) String)\n(define-fun |SecurityLevel.Type.==| ((x |SNG_Data_Model.SecurityLevel.Type|) (y |SNG_Data_Model.SecurityLevel.Type|)) B (= x y))\n(define-fun |SecurityLevel.Type.!=| ((x |SNG_Data_Model.SecurityLevel.Type|) (y |SNG_Data_Model.SecurityLevel.Type|)) B (not (= x y)))\n(define-fun |SecurityLevel.Type.<=| ((x |SNG_Data_Model.SecurityLevel.Type|) (y |SNG_Data_Model.SecurityLevel.Type|)) B (<= (|SecurityLevel.Type.ordinal| x) (|SecurityLevel.Type.ordinal| y)))\n(declare-fun |SecurityLevel.Type.randomSeed(Z)| (Z) |SNG_Data_Model.SecurityLevel.Type|)\n(declare-fun |SecurityLevel.Type.randomSeedBetween(Z, SNG_Data_Model.SecurityLevel.Type, SNG_Data_Model.SecurityLevel.Type)| (Z |SNG_Data_Model.SecurityLevel.Type| |SNG_Data_Model.SecurityLevel.Type|) |SNG_Data_Model.SecurityLevel.Type|)\n\n(declare-const |e:SecurityLevel.Public| |SNG_Data_Model.SecurityLevel.Type|)\n\n(assert (= |e:SecurityLevel.Public| |T:SNG_Data_Model.SecurityLevel.Type.Public|))\n\n(assert (= (|SecurityLevel.Type.ordinal| |e:SecurityLevel.Public|) 0))\n\n(assert (= (|SecurityLevel.Type.name| |e:SecurityLevel.Public|) \"Public\"))\n\n(declare-const |e:SecurityLevel.Restricted| |SNG_Data_Model.SecurityLevel.Type|)\n\n(assert (= |e:SecurityLevel.Restricted| |T:SNG_Data_Model.SecurityLevel.Type.Restricted|))\n\n(assert (= (|SecurityLevel.Type.ordinal| |e:SecurityLevel.Restricted|) 1))\n\n(assert (= (|SecurityLevel.Type.name| |e:SecurityLevel.Restricted|) \"Restricted\"))\n\n(declare-const |e:SecurityLevel.Critical| |SNG_Data_Model.SecurityLevel.Type|)\n\n(assert (= |e:SecurityLevel.Critical| |T:SNG_Data_Model.SecurityLevel.Type.Critical|))\n\n(assert (= (|SecurityLevel.Type.ordinal| |e:SecurityLevel.Critical|) 2))\n\n(assert (= (|SecurityLevel.Type.name| |e:SecurityLevel.Critical|) \"Critical\"))\n\n(assert (distinct |e:SecurityLevel.Public| |e:SecurityLevel.Restricted| |e:SecurityLevel.Critical|))\n\n(assert (forall ((x |SNG_Data_Model.Message|)) (= (sub-type (type-of x) |T:SNG_Data_Model.Message|) (= (type-of x) |T:SNG_Data_Model.Message|))))\n\n\n(declare-fun |Message.payload| (|SNG_Data_Model.Message|) S32)\n(declare-fun |Message.security_level| (|SNG_Data_Model.Message|) |SNG_Data_Model.SecurityLevel.Type|)\n(declare-fun |Message.payload_=| (|SNG_Data_Model.Message| S32) |SNG_Data_Model.Message|)\n(assert (forall ((x!0 |SNG_Data_Model.Message|) (x!1 S32) (x!2 |SNG_Data_Model.Message|))\n  (=>\n    (= (type-of x!2) |T:SNG_Data_Model.Message|)\n    (= x!2 (|Message.payload_=| x!0 x!1))\n    (and\n      (= (type-of x!2) (type-of x!0))\n      (= (|Message.payload| x!2) x!1)\n      (= (|Message.security_level| x!2) (|Message.security_level| x!0))\n    )\n  )\n))\n(declare-fun |Message.security_level_=| (|SNG_Data_Model.Message| |SNG_Data_Model.SecurityLevel.Type|) |SNG_Data_Model.Message|)\n(assert (forall ((x!0 |SNG_Data_Model.Message|) (x!1 |SNG_Data_Model.SecurityLevel.Type|) (x!2 |SNG_Data_Model.Message|))\n  (=>\n    (= (type-of x!2) |T:SNG_Data_Model.Message|)\n    (= x!2 (|Message.security_level_=| x!0 x!1))\n    (and\n      (= (type-of x!2) (type-of x!0))\n      (= (|Message.payload| x!2) (|Message.payload| x!0))\n      (= (|Message.security_level| x!2) x!1)\n    )\n  )\n))\n(declare-fun |Message.new| (S32 |SNG_Data_Model.SecurityLevel.Type|) |SNG_Data_Model.Message|)\n(assert (forall ((payload S32) (security_level |SNG_Data_Model.SecurityLevel.Type|) (x!0 |SNG_Data_Model.Message|))\n  (=>\n    (= x!0 (|Message.new| payload security_level))\n    (and\n      (= (type-of x!0) |T:SNG_Data_Model.Message|)\n      (= (|Message.payload| x!0) payload)\n      (= (|Message.security_level| x!0) security_level))\n  )\n))\n(define-fun |Message.==| ((x!0 |SNG_Data_Model.Message|) (x!1 |SNG_Data_Model.Message|)) B\n  (and\n    (= (type-of x!0) (type-of x!1) |T:SNG_Data_Model.Message|)\n    (|S32.==| (|Message.payload| x!0) (|Message.payload| x!1))\n    (|SecurityLevel.Type.==| (|Message.security_level| x!0) (|Message.security_level| x!1))))\n(assert (forall ((x |SNG_Data_Model.Message|) (y |SNG_Data_Model.Message|)) (=> (= (type-of x) (type-of y) |T:SNG_Data_Model.Message|) (= x y) (|Message.==| x y))))\n(assert (forall ((x |SNG_Data_Model.Message|) (y |SNG_Data_Model.Message|))\n  (=>\n    (= (type-of x) |T:SNG_Data_Model.Message|)\n    (= (type-of y) |T:SNG_Data_Model.Message|)\n    (|Message.==| x y)\n    (= x y))))\n(define-fun |Message.!=| ((x |SNG_Data_Model.Message|) (y |SNG_Data_Model.Message|)) B (not (|Message.==| x y)))\n\n\n\n(declare-fun |GumboLib.GUMBO__Library.allowedSecurityLevel(Message)| (ADT) B)\n\n\n(assert (forall ((|l:m:GumboLib.GUMBO__Library.allowedSecurityLevel| |SNG_Data_Model.Message|))\n  (=>\n    (= (type-of |l:m:GumboLib.GUMBO__Library.allowedSecurityLevel|) |T:SNG_Data_Model.Message|)\n    (and\n      (forall ((cx!15 B))\n        (=>\n          (and\n            (|SecurityLevel.Type.==| (|Message.security_level| |l:m:GumboLib.GUMBO__Library.allowedSecurityLevel|) |e:SecurityLevel.Restricted|)\n            (= cx!15 true))\n          (= cx!15 (|GumboLib.GUMBO__Library.allowedSecurityLevel(Message)| |l:m:GumboLib.GUMBO__Library.allowedSecurityLevel|))))\n      (forall ((cx!14 B))\n        (=>\n          (and\n            (not (|SecurityLevel.Type.==| (|Message.security_level| |l:m:GumboLib.GUMBO__Library.allowedSecurityLevel|) |e:SecurityLevel.Restricted|))\n            (= cx!14 (|SecurityLevel.Type.==| (|Message.security_level| |l:m:GumboLib.GUMBO__Library.allowedSecurityLevel|) |e:SecurityLevel.Public|)))\n          (= cx!14 (|GumboLib.GUMBO__Library.allowedSecurityLevel(Message)| |l:m:GumboLib.GUMBO__Library.allowedSecurityLevel|))))))))\n\n(declare-const cx!1 |SNG_Data_Model.Message|)\n(declare-const |g:output| |SNG_Data_Model.Message|)\n(assert (= (type-of |g:output|) |T:SNG_Data_Model.Message|))\n(declare-const cx!2 |SNG_Data_Model.Message|)\n(declare-const |g:input| |SNG_Data_Model.Message|)\n(assert (= (type-of |g:input|) |T:SNG_Data_Model.Message|))\n(declare-const cx!3 B)\n(declare-const cx!5 |SNG_Data_Model.Message|)\n(declare-const cx!16 B)\n(declare-const cx!4 B)\n(declare-const cx!17 |SNG_Data_Model.Message|)\n(declare-const cx!18 B)\n(declare-const cx!19 B)\n\n(assert (= cx!1 |g:output|))\n(assert (= cx!2 |g:input|))\n(assert (= cx!3 (|Message.==| cx!1 cx!2)))\n(assert (ite cx!3\n          (and\n            (= cx!5 |g:output|)\n            (= cx!16 (|GumboLib.GUMBO__Library.allowedSecurityLevel(Message)| cx!5)))\n          true\n        ))\n(assert (= cx!4 (ite cx!3 cx!16 false)))\n(assert (= cx!17 |g:input|))\n(assert (= cx!18 (|GumboLib.GUMBO__Library.allowedSecurityLevel(Message)| cx!17)))\n(assert (= cx!19 (|B.__>:| cx!4 cx!18)))\n(assert (not cx!19))\n\n(check-sat)\n(exit)"
+}

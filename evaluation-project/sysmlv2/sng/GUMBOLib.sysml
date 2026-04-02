@@ -6,15 +6,15 @@ package GumboLib {
     library
 
     functions
-      def clampedPayloadLowerBound(): Base_Types::Integer_32 := 0[i32];   
-      def clampedPayloadUpperBound(): Base_Types::Integer_32 := 100[i32];   
+      def clampedPayloadLowerBound(): Base_Types::Integer_32 := 0[i32];
+      def clampedPayloadUpperBound(): Base_Types::Integer_32 := 100[i32];
 
       def clampedPayload(m: SNG_Data_Model::Message): Base_Types::Boolean :=
           (clampedPayloadLowerBound() <= m.payload) and (m.payload <= clampedPayloadUpperBound());
 
       def allowedSecurityLevel(m: SNG_Data_Model::Message): Base_Types::Boolean :=
-          (m.security_level == SNG_Data_Model::SecurityLevel::Restricted) or 
-          (m.security_level == SNG_Data_Model::SecurityLevel::Public);
+          (m.security_level == SNG_Data_Model::SecurityLevel.Restricted) or
+          (m.security_level == SNG_Data_Model::SecurityLevel.Public);
 
       def equalSecurityLevel(m1: SNG_Data_Model::Message,
                              m2: SNG_Data_Model::Message): Base_Types::Boolean :=

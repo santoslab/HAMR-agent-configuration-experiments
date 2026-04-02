@@ -9,7 +9,13 @@
       "Bash(echo \"EXIT_CODE=$?\")",
       "Bash(mkdir -p /Users/hatcliff/Dev/git-repos/hamr-agent-configuration-experiments-git/hamr-claude-training/.claude/skills/verify)",
       "Bash(mkdir -p /Users/hatcliff/Dev/git-repos/hamr-agent-configuration-experiments-git/hamr-claude-training/.claude/skills/test-components)",
-      "Bash(make test:*)"
+      "Bash(make test:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(echo:*)",
+      "mcp__sireum__sireum_hamr_sysml_tipe",
+      "WebFetch(domain:github.com)",
+      "mcp__sireum__sireum_hamr_sysml_logika",
+      "mcp__sireum__sireum_hamr_sysml_codegen"
     ]
   },
   "enableAllProjectMcpServers": true,

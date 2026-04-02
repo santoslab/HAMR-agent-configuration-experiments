@@ -44,7 +44,7 @@ verus! {
       value: SNG_Data_Model::Message)
       requires
         // guarantee No_Critical_Output
-        value.security_level != SNG_Data_Model::SecurityLevel::Critical,
+        GumboLib::allowedSecurityLevel_spec(value),
       ensures
         old(self).input == self.input,
         self.output == Some(value),
