@@ -37,9 +37,9 @@ package Isolette_Software {
   //===============================================================================
   part def Thermostat :> Periodic_Rust_Thread {
     //-- I n t e r f a c e  --
-    in port current_temp : DataPort { :>> type : Isolette_Data_Model::Temp; }
-    in port desired_temp : DataPort { :>> type : Isolette_Data_Model::Set_Points; }
-    out port heat_control : DataPort { :>> type : Isolette_Data_Model::On_Off; }
+    port current_temp : DataPort { in :>> type : Isolette_Data_Model::Temp; }
+    port desired_temp : DataPort { in :>> type : Isolette_Data_Model::Set_Points; }
+    port heat_control : DataPort { out :>> type : Isolette_Data_Model::On_Off; }
     
     //-- B e h a v i o r    C o n s t r a i n t s --
     language "GUMBO" /*{
@@ -104,6 +104,6 @@ package Isolette_Software {
     //===============================================================================
     part def OperatorInterface :> Periodic_Rust_Thread {
       //-- I n t e r f a c e  --
-      out port desired_temp : DataPort { :>> type : Isolette_Data_Model::Set_Points; }
+      port desired_temp : DataPort { out :>> type : Isolette_Data_Model::Set_Points; }
     }
 }

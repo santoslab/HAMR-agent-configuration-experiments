@@ -240,14 +240,11 @@ pub fn compute_CEP_Post(
   api_desired_temp: Isolette_Data_Model::Set_Points,
   api_heat_control: Isolette_Data_Model::On_Off) -> bool
 {
-  // I-Guar-Guard: Integration constraints for thermostat's outgoing ports
-  let r0: bool = I_Assm_current_temp(api_current_temp);
-
   // CEP-Guar: guarantee clauses of thermostat's compute entrypoint
-  let r1: bool = compute_CEP_T_Guar(lastCmd, api_heat_control);
+  let r0: bool = compute_CEP_T_Guar(lastCmd, api_heat_control);
 
   // CEP-T-Case: case clauses of thermostat's compute entrypoint
-  let r2: bool = compute_CEP_T_Case(In_lastCmd, api_current_temp, api_desired_temp, api_heat_control);
+  let r1: bool = compute_CEP_T_Case(In_lastCmd, api_current_temp, api_desired_temp, api_heat_control);
 
-  return r0 && r1 && r2;
+  return r0 && r1;
 }

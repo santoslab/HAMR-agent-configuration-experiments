@@ -129,7 +129,13 @@ verus! {
         // reset activation count
         self.activations_until_update = 5;
       }
-      log_set_point_simulation(&self);
+      log_set_point_simulation(
+        self.lower_desired_temp,
+        self.upper_desired_temp,
+        self.lower_desired_temp_trajectory,
+        self.upper_desired_temp_trajectory,
+        self.activations_until_update,
+      );
 
       // build set points struct
       let set_points = 
@@ -158,13 +164,19 @@ verus! {
   //  Logging Helper Functions
   //-------------------------------------------
   #[verifier::external_body]
-  pub fn log_set_point_simulation(state: &operator_interface_operator_interface)
+  pub fn log_set_point_simulation(
+    lower_desired_temp: i32,
+    upper_desired_temp: i32,
+    lower_desired_temp_trajectory: i32,
+    upper_desired_temp_trajectory: i32,
+    activations_until_update: i32,
+  )
   {
-     log::info!("LDT: {}", state.lower_desired_temp);
-     log::info!("UDT: {}", state.upper_desired_temp);
-     log::info!("LDT Trajectory: {}", state.lower_desired_temp_trajectory);
-     log::info!("UDT Trajectory: {}", state.upper_desired_temp_trajectory);
-     log::info!("Activations until update: {}", state.activations_until_update);
+     log::info!("LDT: {}", lower_desired_temp);
+     log::info!("UDT: {}", upper_desired_temp);
+     log::info!("LDT Trajectory: {}", lower_desired_temp_trajectory);
+     log::info!("UDT Trajectory: {}", upper_desired_temp_trajectory);
+     log::info!("Activations until update: {}", activations_until_update);
   }
 
   #[verifier::external_body]

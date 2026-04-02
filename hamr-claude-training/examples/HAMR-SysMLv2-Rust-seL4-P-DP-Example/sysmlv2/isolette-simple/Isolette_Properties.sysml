@@ -2,9 +2,6 @@ package Isolette_Properties {
 
   private import HAMR::*;
 
-  // scheduling information
-  //   ..declaration of scheduling domain identifiers 
-  
   attribute Domain_OI: CASE_Scheduling::Domain = 2;
   attribute Domain_TS: CASE_Scheduling::Domain = 3;
   attribute Domain_THERM: CASE_Scheduling::Domain = 4;

@@ -36,7 +36,7 @@ lazy_static::lazy_static! {
 #[cfg(test)]
 pub fn initialize_test_globals() {
   unsafe {
-    *OUT_current_temp.lock().unwrap() = None;
+    *OUT_current_temp.lock().unwrap_or_else(|e| e.into_inner()) = None;
   }
 }
 
@@ -44,7 +44,7 @@ pub fn initialize_test_globals() {
 pub fn put_current_temp(value: *mut Isolette_Data_Model::Temp) -> bool
 {
   unsafe {
-    *OUT_current_temp.lock().unwrap() = Some(*value);
+    *OUT_current_temp.lock().unwrap_or_else(|e| e.into_inner()) = Some(*value);
     return true;
   }
 }

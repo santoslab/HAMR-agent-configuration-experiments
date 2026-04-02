@@ -24,5 +24,5 @@ pub fn put_concrete_inputs()
 /// getter for OUT DataPort
 pub fn get_current_temp() -> Isolette_Data_Model::Temp
 {
-  return extern_api::OUT_current_temp.lock().unwrap().expect("Not expecting None")
+  return extern_api::OUT_current_temp.lock().unwrap_or_else(|e| e.into_inner()).expect("Not expecting None")
 }

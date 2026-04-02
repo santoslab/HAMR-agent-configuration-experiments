@@ -122,7 +122,7 @@ verus! {
         self.temp_trajectory = temp_trajectory_up
       };
       // log state of temperature simulation
-      log_temp_simulation(&self);
+      log_temp_simulation(self.latest_temp, self.temp_trajectory);
 
       // put the "sensed" value on current_temp output port
       api.put_current_temp(Temp { degrees: self.latest_temp });
@@ -148,10 +148,10 @@ verus! {
   //  Logging Helper Functions
   //-------------------------------------------
   #[verifier::external_body]
-  pub fn log_temp_simulation(state: &temp_sensor_temp_sensor)
+  pub fn log_temp_simulation(latest_temp: i32, temp_trajectory: i32)
   {
-     log::info!("Sensed Temp: {}", state.latest_temp);
-     log::info!("Simulated Temp Trajectory: {}", state.temp_trajectory);
+     log::info!("Sensed Temp: {}", latest_temp);
+     log::info!("Simulated Temp Trajectory: {}", temp_trajectory);
   }
 
   #[verifier::external_body]

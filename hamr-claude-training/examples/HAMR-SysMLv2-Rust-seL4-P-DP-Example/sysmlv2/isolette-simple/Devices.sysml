@@ -25,7 +25,7 @@ package Devices {
   //===============================================================================
   part def TempSensor :> Thread {
     //-- I n t e r f a c e  --
-    out port current_temp : DataPort { :>> type : Isolette_Data_Model::Temp; }
+    port current_temp : DataPort { out :>> type : Isolette_Data_Model::Temp; }
 
     //-- P r o p e r t i e s  --
     attribute :>> Period = 1000 [ms];
@@ -47,7 +47,7 @@ package Devices {
   //===============================================================================
   part def HeatSource :> Thread {
     //-- I n t e r f a c e  --
-    in port heat_control : DataPort { :>> type : Isolette_Data_Model::On_Off; }
+    port heat_control : DataPort { in :>> type : Isolette_Data_Model::On_Off; }
 
     //-- P r o p e r t i e s  --
     attribute :>> Period = 1000 [ms];

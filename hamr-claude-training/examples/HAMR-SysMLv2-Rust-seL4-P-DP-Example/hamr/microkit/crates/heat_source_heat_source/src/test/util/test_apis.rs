@@ -25,5 +25,5 @@ pub fn put_concrete_inputs(heat_control: Isolette_Data_Model::On_Off)
 /// setter for IN DataPort
 pub fn put_heat_control(value: Isolette_Data_Model::On_Off)
 {
-  *extern_api::IN_heat_control.lock().unwrap() = Some(value)
+  *extern_api::IN_heat_control.lock().unwrap_or_else(|e| e.into_inner()) = Some(value)
 }

@@ -38,7 +38,7 @@ lazy_static::lazy_static! {
 #[cfg(test)]
 pub fn initialize_test_globals() {
   unsafe {
-    *IN_heat_control.lock().unwrap() = None;
+    *IN_heat_control.lock().unwrap_or_else(|e| e.into_inner()) = None;
   }
 }
 
@@ -46,7 +46,8 @@ pub fn initialize_test_globals() {
 pub fn get_heat_control(value: *mut Isolette_Data_Model::On_Off) -> bool
 {
   unsafe {
-    *value = IN_heat_control.lock().unwrap().expect("Not expecting None");
-    return true;
+    let guard = IN_heat_control.lock().unwrap_or_else(|e| e.into_inner());
+    *value = guard.expect("Not expecting None");
+    true
   }
 }

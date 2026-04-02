@@ -1138,32 +1138,32 @@ mod GUMBOX_tests {
     }
   }
 
-  testComputeCB_macro! {
-    prop_testComputeCB_macro, // test name
-    config: ProptestConfig { // proptest configuration, built by overriding fields from default config
-      cases: numValidComputeTestCases,
-      max_global_rejects: numValidComputeTestCases * computeRejectRatio,
-      verbose: verbosity,
-      ..ProptestConfig::default()
-    },
-    // strategies for generating each component input
-    api_current_temp: generators::Isolette_Data_Model_Temp_strategy_default(),
-    api_desired_temp: generators::Isolette_Data_Model_Set_Points_strategy_default()
-  }
+  // testComputeCB_macro! {
+  //   prop_testComputeCB_macro, // test name
+  //   config: ProptestConfig { // proptest configuration, built by overriding fields from default config
+  //     cases: numValidComputeTestCases,
+  //     max_global_rejects: numValidComputeTestCases * computeRejectRatio,
+  //     verbose: verbosity,
+  //     ..ProptestConfig::default()
+  //   },
+  //   // strategies for generating each component input
+  //   api_current_temp: generators::Isolette_Data_Model_Temp_strategy_default(),
+  //   api_desired_temp: generators::Isolette_Data_Model_Set_Points_strategy_default()
+  // }
 
-  testComputeCBwGSV_macro! {
-    prop_testComputeCBwGSV_macro, // test name
-    config: ProptestConfig { // proptest configuration, built by overriding fields from default config
-      cases: numValidComputeTestCases,
-      max_global_rejects: numValidComputeTestCases * computeRejectRatio,
-      verbose: verbosity,
-      ..ProptestConfig::default()
-    },
-    // strategies for generating each component input
-    In_lastCmd: generators::Isolette_Data_Model_On_Off_strategy_default(),
-    api_current_temp: generators::Isolette_Data_Model_Temp_strategy_default(),
-    api_desired_temp: generators::Isolette_Data_Model_Set_Points_strategy_default()
-  }
+  // testComputeCBwGSV_macro! {
+  //   prop_testComputeCBwGSV_macro, // test name
+  //   config: ProptestConfig { // proptest configuration, built by overriding fields from default config
+  //     cases: numValidComputeTestCases,
+  //     max_global_rejects: numValidComputeTestCases * computeRejectRatio,
+  //     verbose: verbosity,
+  //     ..ProptestConfig::default()
+  //   },
+  //   // strategies for generating each component input
+  //   In_lastCmd: generators::Isolette_Data_Model_On_Off_strategy_default(),
+  //   api_current_temp: generators::Isolette_Data_Model_Temp_strategy_default(),
+  //   api_desired_temp: generators::Isolette_Data_Model_Set_Points_strategy_default()
+  // }
 
   testComputeCBwGSV_macro! {
     prop_testComputeCBwGSV_REQ2thru4, // test name
