@@ -8,7 +8,8 @@
       "Bash(make verus:*)",
       "Bash(echo \"EXIT_CODE=$?\")",
       "Bash(mkdir -p /Users/hatcliff/Dev/git-repos/hamr-agent-configuration-experiments-git/hamr-claude-training/.claude/skills/verify)",
-      "Bash(mkdir -p /Users/hatcliff/Dev/git-repos/hamr-agent-configuration-experiments-git/hamr-claude-training/.claude/skills/test-components)"
+      "Bash(mkdir -p /Users/hatcliff/Dev/git-repos/hamr-agent-configuration-experiments-git/hamr-claude-training/.claude/skills/test-components)",
+      "Bash(make test:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
