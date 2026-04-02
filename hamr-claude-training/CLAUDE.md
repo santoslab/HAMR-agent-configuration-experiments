@@ -17,7 +17,7 @@ Documentation is in the folder @doc.  The primary contents are as follows:
 - Component Implementation Guide - @doc/component-implementation-guide.md explains how to implement Rust application logic for HAMR thread components, including Verus blocks, port API usage, logging, and complete examples.
 - Testing Guide - @doc/testing-guide.md describes how to test HAMR components using the generated test infrastructure, covering manual unit tests, GUMBOX contract-based tests, and automated PropTest property-based tests.
 - Build and Verification Commands - @doc/build-and-verification-commands.md documents the Makefile targets for building, testing, and running Verus verification on component crates.
-- SysMLv2 and GUMBO Quick Reference - @sysmlv2-gumbo-quick-reference.md provides a compact syntax reference for SysMLv2 modeling constructs and the GUMBO contract language, including package declarations, component definitions, port declarations, data types, GUMBO specification blocks, integration constraints, compute contracts, library functions, and expression syntax.
+- SysMLv2 and GUMBO Quick Reference - @doc/sysmlv2-gumbo-quick-reference.md provides a compact syntax reference for SysMLv2 modeling constructs and the GUMBO contract language, including package declarations, component definitions, port declarations, data types, GUMBO specification blocks, integration constraints, compute contracts, library functions, and expression syntax.
 - GUMBO BNF Reference - @doc/gumbo-bnf.md provides a formal BNF grammar for the GUMBO contract language (SysMLv2 version), derived from the ANTLR parser grammar and augmented with built-in predicates (HasEvent, NoSend, MustSend, In) and naming conventions not visible in the grammar.
 
 ## Examples
