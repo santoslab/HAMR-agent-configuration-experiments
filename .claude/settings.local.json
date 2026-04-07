@@ -21,7 +21,9 @@
       "Bash(python3 -c \"import json,sys; data=json.load\\(sys.stdin\\); [print\\(d[''''type''''], d[''''name'''']\\) for d in data]\")",
       "Bash(curl -s \"https://api.github.com/repos/loonwerks/INSPECTA-models/contents/isolette/sysml\")",
       "Bash(python3 -c \"import json,sys; data=json.load\\(sys.stdin\\); [print\\(d[''''name''''], d[''''type'''']\\) for d in data]\")",
-      "Bash(git mv:*)"
+      "Bash(git mv:*)",
+      "Bash(ls:*)",
+      "Bash(git merge:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
