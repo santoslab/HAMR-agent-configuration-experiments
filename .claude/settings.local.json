@@ -15,7 +15,13 @@
       "mcp__sireum__sireum_hamr_sysml_tipe",
       "WebFetch(domain:github.com)",
       "mcp__sireum__sireum_hamr_sysml_logika",
-      "mcp__sireum__sireum_hamr_sysml_codegen"
+      "mcp__sireum__sireum_hamr_sysml_codegen",
+      "Bash(curl:*)",
+      "Bash(curl -s \"https://api.github.com/repos/loonwerks/INSPECTA-Open-Platform/contents/ardupilot-basic\")",
+      "Bash(python3 -c \"import json,sys; data=json.load\\(sys.stdin\\); [print\\(d[''''type''''], d[''''name'''']\\) for d in data]\")",
+      "Bash(curl -s \"https://api.github.com/repos/loonwerks/INSPECTA-models/contents/isolette/sysml\")",
+      "Bash(python3 -c \"import json,sys; data=json.load\\(sys.stdin\\); [print\\(d[''''name''''], d[''''type'''']\\) for d in data]\")",
+      "Bash(git mv:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

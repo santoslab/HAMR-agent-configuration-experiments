@@ -16,6 +16,14 @@ Sources consulted: SNG evaluation project, isolette-simple, ProdCons,
 ardupilot-basic (INSPECTA-Open-Platform), isolette (INSPECTA-models).
 
 ---
+Notes from Jason:
+
+It didn't catch that 'implies' is a short-circuit op in KerML and therefore '->:' is used for logical implication
+The readme should indicate how to write quantified expressions — forAll and exists are actually KerML functions rather than baked into the language.  Note that only a single quantified variable is allowed per expr (and 'in' is optional, though it must be 'in' rather than 'out' if provided).  The following model contains example usages
+https://github.com/loonwerks/INSPECTA-models/blob/main/micro-examples/microkit/gumbo-verus/structs_arrays/sysml/Gumbo_Structs_Arrays.sysml
+
+
+---
 
 ## 1. Embedding in SysMLv2
 
