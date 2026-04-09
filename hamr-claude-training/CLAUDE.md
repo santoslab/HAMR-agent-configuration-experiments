@@ -28,6 +28,8 @@ Examples are in the folder @examples. The purpose and features illustrated in ea
   - output produced by HAMR
   - application code built by developers and how the code is integrated with HAMR-auto-generated code.
 
+The Simple Network Guard (SNG) example (@examples/HAMR-SysMLv2-Rust-seL4-P-EDP-SNG-Example) additionally demonstrates GUMBO contracts (integration constraints and compute contracts), event data port filtering/dropping patterns, and requirements traceability with change reports in its `reports/` folder.
+
 # Other Information
 
 
