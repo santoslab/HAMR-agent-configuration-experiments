@@ -16,6 +16,23 @@ use vstd::prelude::*;
 
 verus! {
 
+  // ── Manual invariant for non-GUMBO state ──────────────────────────────
+  //
+  // The `num_received` field is an implementation-level counter used
+  // only for logging.  Unlike test_sender's `test_case_index` (which
+  // wraps at a small bound), this counter grows monotonically with no
+  // natural upper limit.  To prevent overflow on `num_received + 1`,
+  // we use a *saturating* counter that stops incrementing at
+  // MAX_RECEIVED.  The invariant is: 0 <= num_received <= MAX_RECEIVED.
+  //
+  // See test_sender_test_sender_app.rs for a fuller explanation of why
+  // manual invariants are needed for non-GUMBO state variables.
+  pub const MAX_RECEIVED: i32 = i32::MAX - 1;
+
+  pub open spec fn num_received_inv(n: i32) -> bool {
+    0 <= n && n <= MAX_RECEIVED
+  }
+
   //-------------------------------------------
   //  Application State (as a struct)
   //-------------------------------------------
@@ -47,6 +64,7 @@ verus! {
       api: &mut test_receiver_test_receiver_Application_Api<API>)
       ensures
         // PLACEHOLDER MARKER INITIALIZATION ENSURES
+        num_received_inv(self.num_received), // manual invariant: established by init
     {
       log_info("initialize entrypoint invoked");
       self.num_received = 0;
@@ -60,13 +78,19 @@ verus! {
       api: &mut test_receiver_test_receiver_Application_Api<API>)
       requires
         // PLACEHOLDER MARKER TIME TRIGGERED REQUIRES
+        num_received_inv(old(self).num_received), // manual invariant: assumed at entry
       ensures
         // PLACEHOLDER MARKER TIME TRIGGERED ENSURES
+        num_received_inv(self.num_received), // manual invariant: re-established at exit
     {
       let input_contents = api.get_input();
       match input_contents {
         Some(msg) => {
-          self.num_received = self.num_received + 1;
+          // Saturating increment: stop counting at MAX_RECEIVED to avoid overflow.
+          // The counter is only used for log output, so capping has no functional impact.
+          if self.num_received < MAX_RECEIVED {
+            self.num_received = self.num_received + 1;
+          }
           log_message_received(self.num_received, msg);
         }
         None => {
