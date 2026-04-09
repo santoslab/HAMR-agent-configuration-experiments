@@ -7,7 +7,32 @@ use vstd::prelude::*;
 verus! {
 
   // Number of distinct test messages in the cycle
-  const NUM_TEST_CASES: i32 = 7;
+  pub const NUM_TEST_CASES: i32 = 7;
+
+  // ── Manual invariant for non-GUMBO state ──────────────────────────────
+  //
+  // The `test_case_index` field is an implementation-level state variable
+  // that does not appear in the GUMBO behavioral model. Because HAMR
+  // generates the component struct with `pub` fields, Verus's built-in
+  // data/struct invariant mechanism cannot be applied (Verus cannot track
+  // all mutation sites for public fields).
+  //
+  // Instead, we manually maintain the invariant through entry point
+  // contracts:
+  //   - `initialize` establishes the invariant  (ensures)
+  //   - `timeTriggered` assumes it on entry      (requires)
+  //     and re-establishes it on exit             (ensures)
+  //
+  // This is sound because the HAMR scheduling framework guarantees that
+  // `initialize` executes before any dispatch, and each dispatch sees
+  // the post-state of the previous one.
+  //
+  // Without this invariant, Verus cannot verify that
+  // `self.test_case_index + 1` on the increment line won't overflow,
+  // because it has no information about the field's value at method entry.
+  pub open spec fn test_case_index_inv(idx: i32) -> bool {
+    0 <= idx && idx < NUM_TEST_CASES
+  }
 
   pub struct test_sender_test_sender {
     // PLACEHOLDER MARKER STATE VARS
@@ -31,6 +56,7 @@ verus! {
       api: &mut test_sender_test_sender_Application_Api<API>)
       ensures
         // PLACEHOLDER MARKER INITIALIZATION ENSURES
+        test_case_index_inv(self.test_case_index), // manual invariant: established by init
     {
       log_info("initialize entrypoint invoked");
       self.test_case_index = 0;
@@ -41,8 +67,10 @@ verus! {
       api: &mut test_sender_test_sender_Application_Api<API>)
       requires
         // PLACEHOLDER MARKER TIME TRIGGERED REQUIRES
+        test_case_index_inv(old(self).test_case_index), // manual invariant: assumed at entry
       ensures
         // PLACEHOLDER MARKER TIME TRIGGERED ENSURES
+        test_case_index_inv(self.test_case_index), // manual invariant: re-established at exit
     {
       // Generate test messages that exercise all requirements:
       //   Case 0: Public,     payload=42   -> Gate passes, Filter passes unchanged
